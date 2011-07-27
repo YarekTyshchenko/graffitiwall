@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Example</title>
+    <title>Graffiti Wall</title>
     <style>
     body {
         margin: 0;
@@ -10,7 +10,12 @@
     }
     </style>
     <script type="text/javascript" src="paper.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
     <script type="text/paperscript" canvas="canvas">
+        var textItem = new PointText(new Point(20, 30));
+        textItem.fillColor = 'black';
+        textItem.content = 'Click to draw';
+        
         var path;
         //tool.minDistance = 10;
         function onMouseDown(event) {
