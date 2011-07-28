@@ -13,7 +13,10 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
     <script type="text/paperscript" canvas="canvas">
         var list = [];
-        var path;
+        var path = new Path();
+        path.strokeWidth = 10;
+        path.strokeJoin = 'round';
+        path.strokeCap = 'round';
         var update = function(){
             $.ajax({
                 url: 'test.php',
@@ -37,7 +40,12 @@
         function redraw(data) {
             newpath = new Path();
             c = data.style.color;
-            newpath.strokeColor = new RGBColor(c.red, c.green, c.blue);
+            color = new RGBColor(
+                parseFloat(c.red),
+                parseFloat(c.green),
+                parseFloat(c.blue)
+            );
+            newpath.strokeColor = color;
             newpath.strokeWidth = data.style.width;
             newpath.strokeJoin = 'round';
             newpath.strokeCap = 'round';
@@ -52,17 +60,16 @@
         textItem.fillColor = 'black';
         textItem.content = 'Click to draw';
         
-        //tool.minDistance = 10;
+        tool.minDistance = 5;
         function onMouseDown(event) {
-            path = new Path();
-            path.strokeColor = 'black';
-            path.strokeWidth = 5;
-            path.strokeJoin = 'round';
-            path.strokeCap = 'round';
+            path = path.clone();
+            path.removeSegments();
+            path.strokeColor = new HSBColor(0,0,Math.random());
             path.add(event.point);
         }
 
         function onMouseDrag(event) {
+            circle.position = event.point;
             path.add(event.point);
             
             textItem.content = path.segments.length;
@@ -72,11 +79,8 @@
                 // Send the path
                 list.push(path);
                 sendPath(path);
-                path = new Path();
-                path.strokeColor = 'black';
-                path.strokeWidth = 5;
-                path.strokeJoin = 'round';
-                path.strokeCap = 'round';
+                path = path.clone();
+                path.removeSegments();
                 path.add(event.point);
             }
         }
@@ -114,7 +118,11 @@
                 });
             });
         }
-        
+        var circle = new Path.Circle([0,0], 3)
+        circle.strokeColor = 'black';
+        function onMouseMove(event) {
+            circle.position = event.point;
+        }
         
     </script>
     <script type="text/javascript">
