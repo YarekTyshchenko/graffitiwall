@@ -18,33 +18,34 @@
             $.ajax({
                 url: 'test.php',
                 success: function(data) {
-                    refreshData(data);
+                    $.each($.parseJSON(data), function(key, item){
+                        redraw(item);
+                        view.draw();
+                    });
                 }
             });};
         
-        
+        // On load
         $(function(){
             update();
-            setInterval(update, 1000);
+            setInterval(update, 5000);
         });
         
-        function refreshData(data) {
-            $(list).each(function(){
-                this.remove();
+        function redraw(data) {
+            $.each(list, function(key, item){
+                item.remove();
             });
-            $(JSON.parse(data)).each(function(){
-                newpath = new Path();
-                newpath.strokeColor = 'black';
-                newpath.strokeWidth = 10;
-                newpath.strokeJoin = 'round';
-                newpath.strokeCap = 'round';
-                $(this).each(function(){
-                    point = new Point(this.x, this.y);
-                    newpath.add(point);
-                });
-                list.push(newpath);
+            newpath = new Path();
+            
+            c = data.style.color;
+            newpath.strokeColor = new RGBColor(c.red, c.green, c.blue);
+            newpath.strokeWidth = data.style.width;
+            newpath.strokeJoin = 'round';
+            newpath.strokeCap = 'round';
+            $.each(data.data, function(key, item){
+                point = new Point(item.x, item.y);
+                newpath.add(point);
             });
-            view.draw();
         }
         
         var textItem = new PointText(new Point(20, 30));
@@ -90,12 +91,25 @@
         function sendPath(path) {
             result = new Array();
             $(path.segments).each(function(){
-                point = {x: this.getPoint().getX(), y: this.getPoint().getY() };
+                point = {
+                    x: this.getPoint().getX(), 
+                    y: this.getPoint().getY(),
+                };
                 result.push(point);
             });
-            
-            $.post('test.php', {data:result}, function(data){
-                refreshData(data);
+            c = path.style.getStrokeColor();
+            data = {
+                data:result,
+                style: {
+                    color: { red:c.red, green:c.green, blue:c.blue, alpha:c.alpha },
+                    width: path.style.getStrokeWidth(),
+                },
+            };
+            $.post('test.php', data, function(response){
+                parsedResponse = $.parseJSON(response);
+                $.each(parsedResponse, function(key, item) {
+                    redraw(item);
+                });
             });
         }
         
