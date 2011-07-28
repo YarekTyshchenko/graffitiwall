@@ -64,10 +64,10 @@
         function onMouseDrag(event) {
             path.add(event.point);
             //path.smooth();
-            textItem.content = 'Segment count: ' + path.segments.length;
+            textItem.content = path.segments.length;
             
             if (path.segments.length >= 100) {
-                textItem.content = 'Reset Path';
+                textItem.content = 'Saving';
                 // Send the path
                 list.push(path);
                 sendPath(path);
