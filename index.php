@@ -14,9 +14,13 @@
     <script type="text/paperscript" canvas="canvas">
         var list = [];
         var path = new Path();
-        path.strokeWidth = 10;
+        path.strokeWidth = 30;
         path.strokeJoin = 'round';
         path.strokeCap = 'round';
+        
+        var circle = new Path.Circle([0,0], path.strokeWidth/2)
+        circle.strokeColor = 'black';
+        
         var update = function(){
             $.ajax({
                 url: 'test.php',
@@ -118,8 +122,7 @@
                 });
             });
         }
-        var circle = new Path.Circle([0,0], 3)
-        circle.strokeColor = 'black';
+        
         function onMouseMove(event) {
             circle.position = event.point;
         }
