@@ -18,10 +18,13 @@
             $.ajax({
                 url: 'test.php',
                 success: function(data) {
+                    $.each(list, function(key, item){
+                        item.remove();
+                    });
                     $.each($.parseJSON(data), function(key, item){
                         redraw(item);
-                        view.draw();
                     });
+                    view.draw();
                 }
             });};
         
@@ -32,11 +35,7 @@
         });
         
         function redraw(data) {
-            $.each(list, function(key, item){
-                item.remove();
-            });
             newpath = new Path();
-            
             c = data.style.color;
             newpath.strokeColor = new RGBColor(c.red, c.green, c.blue);
             newpath.strokeWidth = data.style.width;
@@ -46,6 +45,7 @@
                 point = new Point(item.x, item.y);
                 newpath.add(point);
             });
+            list.push(newpath);
         }
         
         var textItem = new PointText(new Point(20, 30));
@@ -56,7 +56,7 @@
         function onMouseDown(event) {
             path = new Path();
             path.strokeColor = 'black';
-            path.strokeWidth = 10;
+            path.strokeWidth = 5;
             path.strokeJoin = 'round';
             path.strokeCap = 'round';
             path.add(event.point);
@@ -64,7 +64,7 @@
 
         function onMouseDrag(event) {
             path.add(event.point);
-            //path.smooth();
+            
             textItem.content = path.segments.length;
             
             if (path.segments.length >= 100) {
@@ -74,8 +74,7 @@
                 sendPath(path);
                 path = new Path();
                 path.strokeColor = 'black';
-                path.strokeColor = 'black';
-                path.strokeWidth = 10;
+                path.strokeWidth = 5;
                 path.strokeJoin = 'round';
                 path.strokeCap = 'round';
                 path.add(event.point);
@@ -106,6 +105,9 @@
                 },
             };
             $.post('test.php', data, function(response){
+                $.each(list, function(key, item){
+                    item.remove();
+                });
                 parsedResponse = $.parseJSON(response);
                 $.each(parsedResponse, function(key, item) {
                     redraw(item);
