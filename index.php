@@ -12,6 +12,9 @@
     <script type="text/javascript" src="paper.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
     <script type="text/paperscript" canvas="canvas">
+        var background = new Layer();
+        var foreground = new Layer();
+        var control = new Layer();
         var list = [];
         var path = new Path();
         path.strokeWidth = 30;
@@ -19,6 +22,7 @@
         path.strokeCap = 'round';
         
         var circle = new Path.Circle([0,0], path.strokeWidth/2)
+        control.addChild(circle);
         circle.strokeColor = 'black';
         
         var update = function(){
@@ -57,6 +61,7 @@
                 point = new Point(item.x, item.y);
                 newpath.add(point);
             });
+            background.addChild(newpath);
             list.push(newpath);
         }
         
@@ -70,6 +75,7 @@
             path.removeSegments();
             path.strokeColor = new HSBColor(0,0,Math.random());
             path.add(event.point);
+            foreground.addChild(path);
         }
 
         function onMouseDrag(event) {
@@ -86,6 +92,7 @@
                 path = path.clone();
                 path.removeSegments();
                 path.add(event.point);
+                foreground.addChild(path);
             }
         }
 
