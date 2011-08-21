@@ -10,5 +10,5 @@ $points = array();
 while ($buffer = fgets($file_handle)) {
     $points[] = json_decode($buffer, true);
 }
-$points = array_slice($points, -200);
+$points = array_slice($points, -150);
 echo json_encode($points);

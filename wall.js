@@ -6,13 +6,24 @@ var path = new Path();
 path.strokeWidth = 30;
 path.strokeJoin = 'round';
 path.strokeCap = 'round';
-var sessionColor = new HSBColor(0,0,Math.random());
+var sessionColor = new HSBColor(Math.random()*360,1,1);
 
-var circle = new Path.Circle([0,0], path.strokeWidth/2)
-control.addChild(circle);
+var circle = new Path.Circle([0,0], path.strokeWidth/2);
+circle.visible = false;
 circle.strokeColor = 'black';
+control.addChild(circle);
 
-var update = function(){
+var colorChooser = new Path.Circle(view.center, 50);
+colorChooser.visible = false;
+colorChooser.strokeColor = 'black';
+colorChooser.fillColor = sessionColor;
+control.addChild(colorChooser);
+
+tool.minDistance = 2;
+
+
+
+var update = function() {
     $.ajax({
         url: 'test.php',
         success: function(data) {
@@ -24,12 +35,13 @@ var update = function(){
             });
             view.draw();
         }
-    });};
+    });
+};
 
 // On load
 $(function(){
     update();
-    setInterval(update, 5000);
+    setInterval(update, 2000);
 });
 
 function redraw(data) {
@@ -52,11 +64,7 @@ function redraw(data) {
     list.push(newpath);
 }
 
-var textItem = new PointText(new Point(20, 30));
-textItem.fillColor = 'black';
-textItem.content = 'Click to draw';
 
-tool.minDistance = 5;
 function onMouseDown(event) {
     path = path.clone();
     path.removeSegments();
@@ -69,10 +77,7 @@ function onMouseDrag(event) {
     circle.position = event.point;
     path.add(event.point);
     
-    textItem.content = path.segments.length;
-    
     if (path.segments.length >= 100) {
-        textItem.content = 'Saving';
         // Send the path
         list.push(path);
         sendPath(path);
@@ -110,6 +115,7 @@ function sendPath(path) {
         $.each(list, function(key, item){
             item.remove();
         });
+        
         parsedResponse = $.parseJSON(response);
         $.each(parsedResponse, function(key, item) {
             redraw(item);
@@ -118,6 +124,53 @@ function sendPath(path) {
 }
 
 function onMouseMove(event) {
-    circle.position = event.point;
+    if (Key.isDown('c')) {
+        pickColor(event);
+    } else {
+        displayDrawingPointer(event);
+    }
 }
 
+function pickColor(event) {
+    colorPosition = colorChooser.position - event.point;
+    x = colorChooser.position.x - event.point.x;
+    y = colorChooser.position.y - event.point.y;
+    angle = (Math.atan2(x, y)*(180/Math.PI)+180);
+    distance = (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))/50);
+    if (distance > 1) {
+        distance = 1;
+    }
+    sessionColor = new HSBColor(angle,1,distance);
+    colorChooser.fillColor = sessionColor;
+}
+
+function onKeyDown(event) {
+    if (event.key == 'c') {
+        displayColorChooser();
+    }
+}
+
+function onKeyUp(event) {
+    if (event.key == 'c') {
+        hideColorChooser();
+    }
+}
+
+function displayColorChooser() {
+    if (!colorChooser.visible) {
+        if (circle.visible) {
+            colorChooser.position = circle.position;
+        }
+        circle.visible = false;
+        colorChooser.visible = true;
+    }
+}
+
+function hideColorChooser() {
+    colorChooser.visible = false;
+}
+
+function displayDrawingPointer(event) {
+    circle.visible = true;
+    circle.position = event.point;
+}
