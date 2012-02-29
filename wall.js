@@ -24,7 +24,9 @@ control.addChild(colorChooser);
 
 tool.minDistance = 2;
 
-
+var helpText = new PointText(new Point(10, 20));
+helpText.font = 'monospace';
+helpText.content = "Hold 'c' to change colour";
 
 var update = function() {
     $.ajax({
