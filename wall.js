@@ -15,7 +15,6 @@ control.addChild(circle);
 
 var fakeCircle = new Path.Circle([0,0], path.strokeWidth/2);
 fakeCircle.visible = false;
-fakeCircle.fillColor = sessionColor;
 
 var colorChooser = new Path.Circle(view.center, 50);
 colorChooser.visible = false;
@@ -76,6 +75,7 @@ function onMouseDown(event) {
     path.add(event.point);
     var fake = fakeCircle.clone();
     fake.position = event.point;
+    fake.fillColor = sessionColor;
     fake.visible = true;
     foreground.addChild(path);
 }
