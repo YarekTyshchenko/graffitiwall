@@ -13,6 +13,10 @@ circle.visible = false;
 circle.strokeColor = 'black';
 control.addChild(circle);
 
+var fakeCircle = new Path.Circle([0,0], path.strokeWidth/2);
+fakeCircle.visible = false;
+fakeCircle.fillColor = sessionColor;
+
 var colorChooser = new Path.Circle(view.center, 50);
 colorChooser.visible = false;
 colorChooser.strokeColor = 'black';
@@ -70,6 +74,9 @@ function onMouseDown(event) {
     path.removeSegments();
     path.strokeColor = sessionColor;
     path.add(event.point);
+    var fake = fakeCircle.clone();
+    fake.position = event.point;
+    fake.visible = true;
     foreground.addChild(path);
 }
 
@@ -89,6 +96,10 @@ function onMouseDrag(event) {
 }
 
 function onMouseUp(event) {
+    // hack to leave a circle when path has one point
+    if (path.segments.length == 1) {
+        path.add(new Point(event.point.x+0.5, event.point.y+0.5));
+    }
     // Send data
     list.push(path);
     sendPath(path);
