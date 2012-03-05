@@ -26,7 +26,7 @@ $(function(){
 function runLapseFrame() {
     if (run) {
         // Preload more lines
-        if (lines.length <= 20) {
+        if (lines.length <= 0) {
             debug.content = 'Loading...';
             getLines();
         }
@@ -39,7 +39,7 @@ function runLapseFrame() {
 function getLines() {
     $.ajax({
         url: 'timelapse.php',
-        async: true,
+        async: false,
         dataType: 'json',
         data: {p: p},
         success: function(data) {
