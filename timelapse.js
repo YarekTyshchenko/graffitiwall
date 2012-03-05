@@ -15,6 +15,7 @@ control.addChild(debug);
 var p = 0;
 var lines = [];
 var run = true;
+var loading = false;
 
 function onFrame(event) {}
 
@@ -26,37 +27,42 @@ $(function(){
 function runLapseFrame() {
     if (run) {
         // Preload more lines
-        if (lines.length <= 0) {
+        if (!loading && lines.length <= 50) {
             debug.content = 'Loading...';
+            loading = true;
             getLines();
         }
     }
     if (lines.length > 0) {
         draw(lines.shift());
+    } else {
+        debug.content = 'End';
     }
 }
 
 function getLines() {
     $.ajax({
         url: 'timelapse.php',
-        async: false,
+        async: true,
         dataType: 'json',
         data: {p: p},
         success: function(data) {
+            loading = false;
+            debug.content = '';
             if (data.error) {
-                debug.content = 'End';
                 run = false;
                 return;
             }
+            
+            // Append to lines store unless its empty
             if (lines.length > 0) {
                 lines = lines.concat(data);
             } else {
                 lines = data;
             }
             p += 1;
-            debug.content = '';
         },
-        failure: function() {
+        error: function() {
             run = false;
         }
     });
