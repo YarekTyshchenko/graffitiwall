@@ -79,6 +79,7 @@ function onMouseDown(event) {
     fake.position = event.point;
     fake.fillColor = sessionColor;
     fake.visible = true;
+    foreground.addChild(fake);
     foreground.addChild(path);
 }
 
