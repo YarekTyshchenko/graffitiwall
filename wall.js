@@ -80,6 +80,7 @@ function onMouseDown(event) {
     fake.fillColor = sessionColor;
     fake.visible = true;
     foreground.addChild(fake);
+    list.push(fake);
     foreground.addChild(path);
 }
 
