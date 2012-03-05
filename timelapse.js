@@ -44,13 +44,14 @@ function getLines() {
         data: {p: p},
         success: function(data) {
             if (data.error) {
-                console.log(data.error);
+                debug.content = 'End';
                 run = false;
+                return;
             }
-            if (!lines) {
-                lines = data;
-            } else {
+            if (lines.length > 0) {
                 lines = lines.concat(data);
+            } else {
+                lines = data;
             }
             p += 1;
             debug.content = '';
