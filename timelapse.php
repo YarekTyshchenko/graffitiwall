@@ -2,13 +2,14 @@
 $chunk = 100;
 $file_handle = fopen('points.log','r');
 if (isset($_GET['p'])) {
-	$p = $_GET['p']*$chunk;
+	$p = $_GET['p'];
 	$points = array();
 	while ($buffer = fgets($file_handle)) {
 	    $points[] = json_decode($buffer, true);
 	}
-	if (isset($points[$p])) {
-		echo json_encode(array_slice($points, $p, $chunk));
+	$array = array_slice($points, $p*$chunk, $chunk);
+	if (!empty($array)) {
+		echo json_encode($array);
 	} else {
 		echo json_encode(array('error' => "Out of range"));
 	}
