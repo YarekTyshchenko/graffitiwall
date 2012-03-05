@@ -2,53 +2,69 @@ var background = new Layer();
 var control = new Layer();
 var list = [];
 
-var frames = new PointText(new Point(10, 50));
+var frames = new PointText(new Point(10, 20));
 frames.font = 'monospace';
 frames.content = 0;
 control.addChild(frames);
 
-var frameCount = 0;
-var totalLines = 0;
-var noError = true;
+var debug = new PointText(new Point(10, 30));
+debug.font = 'monospace';
+debug.content = 0;
+control.addChild(debug);
 
-$.ajax({
-	url: 'timelapse.php',
-	dataType: 'json',	
-	async: false,
-	success: function(data) {
-		totalLines = data.lines;
-	}
+var p = 0;
+var lines = [];
+var run = true;
+
+function onFrame(event) {}
+
+$(function(){
+    runLapseFrame();
+    setInterval(runLapseFrame, 50);
 });
 
-function onFrame(event) {
-	//frames.content = event.time;
-    frameCount += 1;
-    if (totalLines && noError) {
-	    update(frameCount, totalLines);
+function runLapseFrame() {
+    if (run) {
+        // Preload more lines
+        if (lines.length <= 20) {
+            debug.content = 'Loading...';
+            getLines();
+        }
+    }
+    if (lines.length > 0) {
+        draw(lines.shift());
     }
 }
 
-function update(number) {
+function getLines() {
     $.ajax({
         url: 'timelapse.php',
         async: true,
         dataType: 'json',
-        data: {p: number},
+        data: {p: p},
         success: function(data) {
             if (data.error) {
-            	console.log(data.error);
-            	noError = false;
+                console.log(data.error);
+                run = false;
             }
-            draw(data);
+            if (!lines) {
+                lines = data;
+            } else {
+                lines = lines.concat(data);
+            }
+            p += 1;
+            debug.content = '';
         },
         failure: function() {
-			noError = false;
+            run = false;
         }
     });
 };
 
 function draw(data) {
-	newpath = new Path();
+    frames.content += 1;
+
+    newpath = new Path();
     c = data.style.color;
     color = new RGBColor(
         parseFloat(c.red),
@@ -65,8 +81,7 @@ function draw(data) {
     });
     background.addChild(newpath);
     list.push(newpath);
-    frames.content = list.length;
     if (list.length > 200) {
-    	list.shift().remove();
+        list.shift().remove();
     }
 }
