@@ -3,6 +3,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Graffiti Wall</title>
+    <!--
+      This site is basically @yarekt 's catnip: html5 and paper.js plaything
+    -->
     <style>
     body {
         margin: 0;
