@@ -26,7 +26,7 @@ tool.minDistance = 2;
 
 var helpText = new PointText(new Point(10, 20));
 helpText.font = 'monospace';
-helpText.content = "Hold 'c' to change colour";
+helpText.content = "Hold 'c' to change colour, check out /timelapse.html";
 
 var update = function() {
     $.ajax({
