@@ -6,11 +6,12 @@
     <!--
       This site is basically @yarekt 's catnip: html5 and paper.js plaything
     -->
+    <meta name="Description" content="Distributed online Graffiti Wall built with canvas, HTML5 and JavaScript paper.js, Visit to see lots of people draw in real-time on the same space ! Built by @yarekt">
     <style>
-    body {
-        margin: 0;
-        overflow: hidden;
-    }
+        body {
+          margin: 0;
+          overflow: hidden;
+        }
     </style>
     <script type="text/javascript" src="paper.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
