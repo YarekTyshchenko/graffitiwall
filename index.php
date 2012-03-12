@@ -30,7 +30,7 @@
 </head>
 <body>
     <canvas id="canvas" keepalive="true" width=500 height=200 resize>
-        You don't support HTML5 so no canvas for you!
+        <img src='last.php' alt='Latest Graffiti wall image' title='You do not have html5 canvas support'/>
     </canvas>
 </body>
 </html>
