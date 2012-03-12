@@ -31,68 +31,27 @@ tool.minDistance = 1;
 
 var helpText = new PointText(new Point(10, 20));
 helpText.font = 'monospace';
-//helpText.content = "Hold 'c' to change colour, check out /timelapse.html";
-var globaldata = '';
+helpText.content = "Hold 'c' to change colour, check out /timelapse.html";
+var sending = false;
 var backgroundImage = new Image();
 $(backgroundImage).load(function(){
-    $('canvas').css('background', 'url("'+globaldata+'") no-repeat');
+    $('canvas').css('background', 'url("'+this.src+'") no-repeat');
     $.each(list, function(key, item){
         item.remove();
     });
+    sending = false;
     view.draw();
 });
-//var backgroundRaster = new Raster(backgroundImage);
-//background.addChild(backgroundRaster);
-
-
-//function onFrame() {
-//    helpText.content = 'l:'+list.length+' p:'+path.segments.length+' s:'+sentRequests+' '+sending;
-//}
 
 function setImage(data) {
-    globaldata = data;
     backgroundImage.src = data;
-    sending = false;
-    
-    //$('#image').attr('src', data);
-    //var newImage = new Image();
-    //newImage.src = data;
-    //var raster = new Raster(newImage);
-    
-    //backgroundRaster.drawImage(newImage, 0, 0);
-    
-    //view.draw();
-    //view.getCanvas().getContext('2d').drawImage(backgroundImage, 0, 0);
-    //var raster = new Raster('image');
-    //raster.position.x = 500/2;
-    //raster.position.y = 200/2;
-    //console.log(raster);
-    //raster.position.x = view.width / 2;
-    //raster.position.y = view.height / 2;
-
-    //view.draw();
-}
-
-function displayDebug() {
-    helpText.content = 'l:'+list.length+' p:'+path.segments.length+' r:'+removalList.length+' s:'+sentRequests+' '+sending;
 }
 
 var update = function() {
-    displayDebug();
     $.ajax({
         url: 'points.php',
         success: function(data) {
             setImage(data);
-            //$.each(list, function(key, item){
-            //    item.remove();
-            //});
-            //foreground.removeChildren();
-            /*
-            $.each($.parseJSON(data), function(key, item){
-                redraw(item);
-            });
-            */
-            //view.draw();
         }
     });
 };
@@ -142,12 +101,11 @@ function onMouseDown(event) {
 function onMouseDrag(event) {
     circle.position = event.point;
     path.add(event.point);
-    displayDebug();
 
     if (path.segments.length >= maxPathLength) {
         // Send the path
         list.push(path);
-        sendData(path);
+        sendPath(path);
         path = path.clone();
         path.removeSegments();
         path.add(event.point);
@@ -162,14 +120,10 @@ function onMouseUp(event) {
     }
     // Send data
     list.push(path);
-    sendData(path);
+    sendPath(path);
 }
 
-var sending = false;
-var sentRequests = 0;
-function sendData(path) {
-    displayDebug();
-
+function sendPath(path) {
     if (sending == false) {
         sending = true;
         control.visible = false;
@@ -178,44 +132,11 @@ function sendData(path) {
             data: view.getCanvas().toDataURL()
         };
         control.visible = true;
-        sentRequests++;
         $.post('points.php', data, function(response){
             setImage(response);
         });
-    } else {
-        console.log('Outstanding request');
     }
 }
-
-/*
-function sendPath(path) {
-    var result = new Array();
-    $(path.segments).each(function(){
-        var point = {
-            x: this.getPoint().getX(), 
-            y: this.getPoint().getY(),
-        };
-        result.push(point);
-    });
-    var c = path.style.getStrokeColor();
-    var data = {
-        data:result,
-        style: {
-            color: { red:c.red, green:c.green, blue:c.blue, alpha:c.alpha },
-            width: path.style.getStrokeWidth(),
-        },
-    };
-    $.post('test.php', data, function(response){
-        $.each(list, function(key, item){
-            item.remove();
-        });
-        
-        $.each($.parseJSON(response), function(key, item) {
-            redraw(item);
-        });
-    });
-}
-*/
 
 function onMouseMove(event) {
     if (Key.isDown('c')) {
