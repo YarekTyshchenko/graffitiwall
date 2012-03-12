@@ -1,7 +1,12 @@
+
+var updateDelay = 1000;
+var maxPathLength = 80;
+
 var background = new Layer();
 var foreground = new Layer();
 var control = new Layer();
 var list = [];
+var removalList = [];
 var path = new Path();
 path.strokeWidth = 30;
 path.strokeJoin = 'round';
@@ -22,23 +27,72 @@ colorChooser.strokeColor = 'black';
 colorChooser.fillColor = sessionColor;
 control.addChild(colorChooser);
 
-tool.minDistance = 2;
+tool.minDistance = 1;
 
 var helpText = new PointText(new Point(10, 20));
 helpText.font = 'monospace';
-helpText.content = "Hold 'c' to change colour, check out /timelapse.html";
+//helpText.content = "Hold 'c' to change colour, check out /timelapse.html";
+var globaldata = '';
+var backgroundImage = new Image();
+$(backgroundImage).load(function(){
+    $('canvas').css('background', 'url("'+globaldata+'") no-repeat');
+    $.each(list, function(key, item){
+        item.remove();
+    });
+    view.draw();
+});
+//var backgroundRaster = new Raster(backgroundImage);
+//background.addChild(backgroundRaster);
+
+
+//function onFrame() {
+//    helpText.content = 'l:'+list.length+' p:'+path.segments.length+' s:'+sentRequests+' '+sending;
+//}
+
+function setImage(data) {
+    globaldata = data;
+    backgroundImage.src = data;
+    sending = false;
+    
+    //$('#image').attr('src', data);
+    //var newImage = new Image();
+    //newImage.src = data;
+    //var raster = new Raster(newImage);
+    
+    //backgroundRaster.drawImage(newImage, 0, 0);
+    
+    //view.draw();
+    //view.getCanvas().getContext('2d').drawImage(backgroundImage, 0, 0);
+    //var raster = new Raster('image');
+    //raster.position.x = 500/2;
+    //raster.position.y = 200/2;
+    //console.log(raster);
+    //raster.position.x = view.width / 2;
+    //raster.position.y = view.height / 2;
+
+    //view.draw();
+}
+
+function displayDebug() {
+    helpText.content = 'l:'+list.length+' p:'+path.segments.length+' r:'+removalList.length+' s:'+sentRequests+' '+sending;
+}
 
 var update = function() {
+    displayDebug();
     $.ajax({
-        url: 'test.php',
+        url: 'points.php',
         success: function(data) {
-            $.each(list, function(key, item){
-                item.remove();
-            });
+            setImage(data);
+            //$.each(list, function(key, item){
+            //    item.remove();
+            //});
+            //foreground.removeChildren();
+            /*
             $.each($.parseJSON(data), function(key, item){
                 redraw(item);
             });
-            view.draw();
+            */
+            //view.draw();
         }
     });
 };
@@ -46,13 +100,14 @@ var update = function() {
 // On load
 $(function(){
     update();
-    setInterval(update, 2000);
+    setInterval(update, updateDelay);
 });
 
+
 function redraw(data) {
-    newpath = new Path();
-    c = data.style.color;
-    color = new RGBColor(
+    var newpath = new Path();
+    var c = data.style.color;
+    var color = new RGBColor(
         parseFloat(c.red),
         parseFloat(c.green),
         parseFloat(c.blue)
@@ -62,7 +117,7 @@ function redraw(data) {
     newpath.strokeJoin = 'round';
     newpath.strokeCap = 'round';
     $.each(data.data, function(key, item){
-        point = new Point(item.x, item.y);
+        var point = new Point(item.x, item.y);
         newpath.add(point);
     });
     background.addChild(newpath);
@@ -87,11 +142,12 @@ function onMouseDown(event) {
 function onMouseDrag(event) {
     circle.position = event.point;
     path.add(event.point);
-    
-    if (path.segments.length >= 100) {
+    displayDebug();
+
+    if (path.segments.length >= maxPathLength) {
         // Send the path
         list.push(path);
-        sendPath(path);
+        sendData(path);
         path = path.clone();
         path.removeSegments();
         path.add(event.point);
@@ -106,20 +162,43 @@ function onMouseUp(event) {
     }
     // Send data
     list.push(path);
-    sendPath(path);
+    sendData(path);
 }
 
+var sending = false;
+var sentRequests = 0;
+function sendData(path) {
+    displayDebug();
+
+    if (sending == false) {
+        sending = true;
+        control.visible = false;
+        view.draw();
+        var data = {
+            data: view.getCanvas().toDataURL()
+        };
+        control.visible = true;
+        sentRequests++;
+        $.post('points.php', data, function(response){
+            setImage(response);
+        });
+    } else {
+        console.log('Outstanding request');
+    }
+}
+
+/*
 function sendPath(path) {
-    result = new Array();
+    var result = new Array();
     $(path.segments).each(function(){
-        point = {
+        var point = {
             x: this.getPoint().getX(), 
             y: this.getPoint().getY(),
         };
         result.push(point);
     });
-    c = path.style.getStrokeColor();
-    data = {
+    var c = path.style.getStrokeColor();
+    var data = {
         data:result,
         style: {
             color: { red:c.red, green:c.green, blue:c.blue, alpha:c.alpha },
@@ -131,12 +210,12 @@ function sendPath(path) {
             item.remove();
         });
         
-        parsedResponse = $.parseJSON(response);
-        $.each(parsedResponse, function(key, item) {
+        $.each($.parseJSON(response), function(key, item) {
             redraw(item);
         });
     });
 }
+*/
 
 function onMouseMove(event) {
     if (Key.isDown('c')) {
@@ -148,10 +227,10 @@ function onMouseMove(event) {
 
 function pickColor(event) {
     colorPosition = colorChooser.position - event.point;
-    x = colorChooser.position.x - event.point.x;
-    y = colorChooser.position.y - event.point.y;
-    angle = (Math.atan2(x, y)*(180/Math.PI)+180);
-    distance = (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))/50);
+    var x = colorChooser.position.x - event.point.x;
+    var y = colorChooser.position.y - event.point.y;
+    var angle = (Math.atan2(x, y)*(180/Math.PI)+180);
+    var distance = (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))/50);
     if (distance > 1) {
         distance = 1;
     }
