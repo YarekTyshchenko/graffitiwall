@@ -3,16 +3,16 @@ var lines = [];
 var run = true;
 var loading = false;
 var drawing = false;
+var interval = null;
 
 var backgroundImage = new Image();
 $(backgroundImage).load(function(){
     $('body').css('background', 'url("'+this.src+'") no-repeat');
-    drawing = false;
 });
 
 $(function(){
     runLapseFrame();
-    setInterval(runLapseFrame, 50);
+    interva = setInterval(runLapseFrame, 50);
 });
 
 function runLapseFrame() {
@@ -20,10 +20,14 @@ function runLapseFrame() {
         // Preload more lines
         if (!loading && lines.length <= 30) {
             loading = true;
+            $('#debug').text('.');
             getLines();
         }
     }
-    if (!drawing && lines.length > 0) {
+    if (lines.length > 0) {
+        if (!run) {
+            clearInterval(interval);
+        }
         draw(lines.shift());
     }
 }
@@ -36,6 +40,7 @@ function getLines() {
         data: {p: p},
         success: function(data) {
             loading = false;
+            $('#debug').text('');
             if (data.error) {
                 run = false;
                 return;
@@ -56,7 +61,6 @@ function getLines() {
 };
 
 function draw(data) {
-    drawing = true;
     backgroundImage.src = data;
 }
 
