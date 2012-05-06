@@ -130,7 +130,8 @@ function sendPath(path) {
         control.visible = false;
         view.draw();
         var data = {
-            data: view.getCanvas().toDataURL()
+            // deflate this string
+            data: view.getCanvas().toDataURL('image/png')
         };
         control.visible = true;
         $.ajax({
