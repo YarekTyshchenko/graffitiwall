@@ -5,5 +5,5 @@ while ($buffer = fgets($file_handle)) {
     $image = $buffer;
 }
 fclose($file_handle);
-header('Content-Type: image/png');
-echo file_get_contents(trim($image));
+header('Content-Type: image/jpeg');
+echo trim($image);
