@@ -5,13 +5,7 @@ define('TYPE', 'png');
 $imagecreate = 'imagecreatefrom'.TYPE;
 
 $savedImageData = getSavedImage();
-if (!empty($_POST['data'])) {
-    // inflate this data
-    // gzinflate();
-    $postImageData = $_POST['data'];
-} else {
-    $postImageData = null;
-}
+$postImageData = getPostImage();
 
 // Both Saved and POST are missing
 if (!$postImageData && !$savedImageData) {
@@ -37,7 +31,7 @@ if (!$savedImageData) {
 
 // POST is missing, Saved is present
 if (!$postImageData) {
-    echo $savedImageData;
+    echo trim($savedImageData);
     exit;
 }
 
@@ -111,7 +105,17 @@ function getSavedImage()
         $image = $buffer;
     }
 
-    $savedImageData = str_replace('data:', 'data://', trim($image));
+    $savedImageData = trim($image);
     fclose($file_handle);
     return $savedImageData;
+}
+
+function getPostImage()
+{
+    if (!empty($_POST['data'])) {
+        // inflate this data
+        // gzinflate();
+        return $_POST['data'];
+    }
+    return;
 }
