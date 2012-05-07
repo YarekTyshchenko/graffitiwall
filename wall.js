@@ -35,7 +35,7 @@ helpText.content = "Hold 'c' to change colour, check out /timelapse.html";
 var sending = false;
 var backgroundImage = new Image();
 $(backgroundImage).load(function(){
-    $('canvas').css('background', 'url("'+this.src+'") no-repeat');
+    $('canvas').css('background', 'url('+this.src+') no-repeat');
     $.each(list, function(key, item){
         item.remove();
     });
@@ -50,6 +50,7 @@ function setImage(data) {
 var update = function() {
     $.ajax({
         url: 'points.php',
+        cache: false,
         success: function(data) {
             setImage(data);
         }
@@ -132,8 +133,14 @@ function sendPath(path) {
             data: view.getCanvas().toDataURL()
         };
         control.visible = true;
-        $.post('points.php', data, function(response){
-            setImage(response);
+        $.ajax({
+            url: 'points.php',
+            data: data,
+            type: 'POST',
+            cache: false,
+            success: function(response) {
+                setImage(response);
+            }
         });
     }
 }
