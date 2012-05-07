@@ -7,12 +7,27 @@ var interval = null;
 
 var backgroundImage = new Image();
 $(backgroundImage).load(function(){
-    $('body').css('background', 'url("'+this.src+'") no-repeat');
+    $('#main_content').css('background', 'url('+this.src+') no-repeat');
 });
+
+var progress = 0;
+function getProgress() {
+    progress++;
+    switch(progress % 4) {
+        case 0:
+            return '|';
+        case 1:
+            return '/';
+        case 2:
+            return '-';
+        case 3:
+            return '\\';
+    }
+}
 
 $(function(){
     runLapseFrame();
-    interva = setInterval(runLapseFrame, 50);
+    interval = setInterval(runLapseFrame, 100);
 });
 
 function runLapseFrame() {
@@ -20,7 +35,7 @@ function runLapseFrame() {
         // Preload more lines
         if (!loading && lines.length <= 30) {
             loading = true;
-            $('#debug').text('.');
+            $('#progress').addClass('loading');
             getLines();
         }
     }
@@ -35,12 +50,14 @@ function runLapseFrame() {
 function getLines() {
     $.ajax({
         url: 'timelapse.php',
+        cache: false,
         async: true,
         dataType: 'json',
         data: {p: p},
         success: function(data) {
             loading = false;
-            $('#debug').text('');
+            $('#progress').removeClass('loading');
+
             if (data.error) {
                 run = false;
                 return;
@@ -62,5 +79,6 @@ function getLines() {
 
 function draw(data) {
     backgroundImage.src = data;
+    $('#progress').text(getProgress());
 }
 

@@ -7,18 +7,29 @@
       This site is basically @yarekt 's catnip: html5 and paper.js plaything
     -->
     <meta name="Description" content="Distributed online Graffiti Wall built with canvas, HTML5 and JavaScript paper.js, Visit to see lots of people draw in real-time on the same space ! Built by @yarekt">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
     <style>
+        html, body {
+            height: 100%;
+        }
         body {
-          margin: 0;
           overflow: hidden;
         }
-        #debug {
-            font-family: monospace
+        #main_content {
+            margin-top: 40px;
+            
+            height: 100%;
+            min-height: 100%;
+            overflow: hidden;
+        }
+        #progress.loading {
+            color: red;
         }
     </style>
     <script type="text/javascript" src="paper.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-    <script type="text/paperscript" canvas="canvas" src='timelapse.js?0001'></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/paperscript" canvas="canvas" src='timelapse.js'></script>
     <script type="text/javascript">
         var _gaq = _gaq || [];
         _gaq.push(['_setAccount', 'UA-23748117-2']);
@@ -32,6 +43,30 @@
     </script>
 </head>
 <body>
-    <div id='debug'></div>
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <span class='brand'>Graffiti Wall</span>
+                <div class='nav-collapse'>
+                    <ul class='nav'>
+                        <li class='divider-vertical'></li>
+                        <li>
+                            <a href='index.php'>Wall</a>
+                        </li>
+                        <li class='active'>
+                            <a href='timelapse.html'>Timelapse</a>
+                        </li>
+                        <!--li>
+                            <a href='about.html'>About</a>
+                        </li-->
+                        <li class='divider-vertical'></li>
+                    </ul>
+                    
+                    <span id='progress' class='navbar-text'> </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id='main_content'></div>
 </body>
 </html>
