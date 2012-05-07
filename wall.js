@@ -6,7 +6,9 @@ var background = new Layer();
 var foreground = new Layer();
 var control = new Layer();
 var list = [];
-var removalList = [];
+
+var pack = [];
+
 var path = new Path();
 path.strokeWidth = 30;
 path.strokeJoin = 'round';
@@ -32,22 +34,55 @@ tool.minDistance = 1;
 var helpText = new PointText(new Point(10, 20));
 helpText.font = 'monospace';
 helpText.content = "Hold 'c' to change colour, check out /timelapse.html";
+
+var debug = new PointText(new Point(10, 40));
+debug.font = 'monospace';
+debug.content = 'debug';
+
+function showDebug() {
+    var a = 'sending: false';
+    if (sending) {
+        a = 'sending: true';
+    }
+
+    var b = 'dirty: false';
+    if (dirty) {
+        b = 'dirty: true';
+    }
+    helpText.content = a+' '+b+ ' ' +list.length+ ':' + path.segments.length;
+}
+
+var dirty = false;
 var sending = false;
+
 var backgroundImage = new Image();
 $(backgroundImage).load(function(){
     $('canvas').css('background', 'url('+this.src+') no-repeat');
-    $.each(list, function(key, item){
-        item.remove();
-    });
-    sending = false;
     view.draw();
+    freeList(pack);
 });
+
+function freeList(list) {
+    $.each(list, function(key, value){
+        value.removeSegments();
+    });
+    list.length = 0;
+}
+
+/*
+function onFrame() {
+    showDebug();
+}
+//*/
 
 function setImage(data) {
     backgroundImage.src = data;
+    
+    debug.content = '';
 }
 
 var update = function() {
+    debug.content = 'u';
     $.ajax({
         url: 'points.php',
         cache: false,
@@ -59,33 +94,13 @@ var update = function() {
 
 // On load
 $(function(){
-    update();
-    setInterval(update, updateDelay);
+    sendPath();
+    setInterval(sendPath, updateDelay);
 });
 
 
-function redraw(data) {
-    var newpath = new Path();
-    var c = data.style.color;
-    var color = new RGBColor(
-        parseFloat(c.red),
-        parseFloat(c.green),
-        parseFloat(c.blue)
-    );
-    newpath.strokeColor = color;
-    newpath.strokeWidth = data.style.width;
-    newpath.strokeJoin = 'round';
-    newpath.strokeCap = 'round';
-    $.each(data.data, function(key, item){
-        var point = new Point(item.x, item.y);
-        newpath.add(point);
-    });
-    background.addChild(newpath);
-    list.push(newpath);
-}
-
-
 function onMouseDown(event) {
+    dirty = true;
     path = path.clone();
     path.removeSegments();
     path.strokeColor = sessionColor;
@@ -95,51 +110,55 @@ function onMouseDown(event) {
     fake.fillColor = sessionColor;
     fake.visible = true;
     foreground.addChild(fake);
-    list.push(fake);
     foreground.addChild(path);
+    
+    list.push(path);
 }
 
 function onMouseDrag(event) {
     circle.position = event.point;
     path.add(event.point);
-
-    if (path.segments.length >= maxPathLength) {
-        // Send the path
-        list.push(path);
-        sendPath(path);
-        path = path.clone();
-        path.removeSegments();
-        path.add(event.point);
-        foreground.addChild(path);
-    }
 }
 
 function onMouseUp(event) {
-    // hack to leave a circle when path has one point
-    if (path.segments.length == 1) {
-        path.add(new Point(event.point.x+0.5, event.point.y+0.5));
-    }
-    // Send data
-    list.push(path);
-    sendPath(path);
 }
 
-function sendPath(path) {
+function sendPath() {
     if (sending == false) {
+        debug.content = '.';
         sending = true;
-        control.visible = false;
-        view.draw();
-        var data = {
-            // deflate this string
-            data: view.getCanvas().toDataURL()
-        };
-        control.visible = true;
+        
+        var data = {};
+        if (dirty || path.segments.length > 0) {
+            control.visible = false;
+            view.draw();
+            data = {
+                // deflate this string
+                data: view.getCanvas().toDataURL()
+            };
+            control.visible = true;
+
+            // Create a new path
+            list.push(path);
+            path = path.clone();
+            path.removeSegments();
+            foreground.addChild(path);
+
+            $.each(list, function(key, path){
+                pack.push(path);
+            });
+            list.length = 0;
+        }
+        
         $.ajax({
             url: 'points.php',
             data: data,
             type: 'POST',
             cache: false,
             success: function(response) {
+                sending = false;
+                dirty = false;
+
                 setImage(response);
             }
         });
