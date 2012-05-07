@@ -1,6 +1,6 @@
 <?php
 
-define('TYPE', 'jpeg');
+define('TYPE', 'png');
 
 $imagecreate = 'imagecreatefrom'.TYPE;
 
