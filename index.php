@@ -13,6 +13,10 @@
         body {
             overflow: hidden;
         }
+
+        #canvas {
+            cursor: crosshair;
+        }
         
         #main_content {
             padding-top: 40px;
