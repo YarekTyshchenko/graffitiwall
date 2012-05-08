@@ -128,6 +128,7 @@ function onMouseDown(event) {
 }
 
 function onMouseDrag(event) {
+    dirty = true;
     circle.position = event.point;
     path.add(event.point);
 }
@@ -140,7 +141,8 @@ function sendPath() {
         var newList = [];
 
         var data = {};
-        if (path.segments.length > 0) {
+        if (dirty || path.segments.length > 1) {
+            dirty = false;
             control.visible = false;
             view.draw();
             data = {

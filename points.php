@@ -1,4 +1,6 @@
 <?php
+require('db.php');
+$db = new DB();
 
 define('TYPE', 'png');
 
@@ -20,11 +22,7 @@ if (!$savedImageData) {
     $renderedImage = 'data:image/'.TYPE.';base64,'.base64_encode(trim(getImage($postImage)));
     imagedestroy($postImage);
 
-    file_put_contents(
-        'pointsData.log',
-        $renderedImage.PHP_EOL,
-        FILE_APPEND
-    );
+    saveImage($renderedImage);
     echo $renderedImage;
     exit;
 }
@@ -79,11 +77,7 @@ imagedestroy($newImage);
 
 $encodedImage = 'data:image/'.TYPE.';base64,'.base64_encode($renderedImage);
 
-file_put_contents(
-    'pointsData.log',
-    $encodedImage.PHP_EOL,
-    FILE_APPEND
-);
+saveImage($encodedImage);
 echo $encodedImage;
 
 // EOF
@@ -99,6 +93,10 @@ function getImage($image)
 
 function getSavedImage()
 {
+    global $db;
+    return $db->getLastImage();
+
+    // Legacy
     $file_handle = fopen('pointsData.log','r');
     $image = '';
     while ($buffer = fgets($file_handle)) {
@@ -118,4 +116,19 @@ function getPostImage()
         return $_POST['data'];
     }
     return;
+}
+
+function saveImage($data)
+{
+    global $db;
+    $db->insert($data);
+    return;
+
+    // Legacy
+    file_put_contents(
+        'pointsData.log',
+        $data.PHP_EOL,
+        FILE_APPEND
+    );
+
 }

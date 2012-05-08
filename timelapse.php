@@ -1,17 +1,34 @@
 <?php
+require('db.php');
+
+define('FILE', false);
+
 $chunk = 30;
 if (isset($_GET['p'])) {
-	$file_handle = fopen('pointsData.log','r');
+	// p = Page
 	$p = $_GET['p'];
+
+	// container to send
 	$points = array();
-	$i = 0;
-	while ($buffer = fgets($file_handle)) {
-		$i++;
-		if ($i > $p*$chunk && $i <= $p*$chunk + $chunk) {
-	    	$points[] = trim($buffer);
+
+	$db = new DB();
+	if (FILE) {
+		$file_handle = fopen('pointsData.log','r');
+		$i = 0;
+		while ($buffer = fgets($file_handle)) {
+			$i++;
+			if ($i > $p*$chunk && $i <= $p*$chunk + $chunk) {
+		    	$points[] = trim($buffer);
+		    	$db->insert(trim($buffer));
+			}
 		}
+		fclose($file_handle);
+	} else {
+		$db = new DB();
+		$points = $db->getChunk($p, $chunk);
 	}
-	fclose($file_handle);
+
+
 	if (!empty($points)) {
 		echo json_encode($points);
 	} else {
