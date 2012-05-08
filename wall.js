@@ -3,19 +3,20 @@ var updateDelay = 2000;
 // Attach color event handlers
 $('#colour-selector').on('click', 'a', function(e){
     e.preventDefault();
-    
+
     selectColor($(this).parent().index());
 });
 
+var sessionWidth = 30;
 $('#brush-selector').on('click', 'a', function(e){
     e.preventDefault();
 
     $('#brush-selector li').removeClass('active');
     $(this).parent().addClass('active');
     
-    path.strokeWidth = $(this).data('size');
-    circle.fitBounds(new Size(path.strokeWidth, path.strokeWidth));
-    fakeCircle.fitBounds(new Size(path.strokeWidth, path.strokeWidth));
+    sessionWidth = $(this).data('size');
+    circle.fitBounds(new Size(sessionWidth));
+    fakeCircle.fitBounds(new Size(sessionWidth));
 });
 
 var background = new Layer();
@@ -25,7 +26,7 @@ var control = new Layer();
 var list = [];
 
 var path = new Path();
-path.strokeWidth = 30;
+path.strokeWidth = sessionWidth;
 path.strokeJoin = 'round';
 path.strokeCap = 'round';
 
@@ -113,6 +114,7 @@ function onMouseDown(event) {
     path = path.clone();
     path.removeSegments();
     path.strokeColor = sessionColor;
+    path.strokeWidth = sessionWidth;
     path.add(event.point);
     var fake = fakeCircle.clone();
     fake.position = event.point;
@@ -150,7 +152,7 @@ function sendPath() {
             // Create a new path
             lastPoint = path.lastSegment.point;
             path = new Path();
-            path.strokeWidth = 30;
+            path.strokeWidth = sessionWidth;
             path.strokeJoin = 'round';
             path.strokeCap = 'round';
             path.strokeColor = sessionColor;
