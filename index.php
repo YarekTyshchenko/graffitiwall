@@ -69,9 +69,9 @@
                         <li>
                             <a href='timelapse.html'>Timelapse</a>
                         </li>
-                        <!--li>
+                        <li>
                             <a href='about.html'>About</a>
-                        </li-->
+                        </li>
                         <li class='divider-vertical'></li>
                     </ul>
                     

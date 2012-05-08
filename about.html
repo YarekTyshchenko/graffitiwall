@@ -10,26 +10,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <style>
-        html, body {
-            height: 100%;
-        }
-        body {
-          overflow: hidden;
-        }
         #main_content {
             margin-top: 40px;
+            padding-top: 20px;
             
             height: 100%;
             min-height: 100%;
-            overflow: hidden;
         }
-        #progress.loading {
-            color: red;
-        }
+        
     </style>
-    <script type="text/javascript" src="paper.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script type="text/paperscript" canvas="canvas" src='timelapse.js'></script>
     <script type="text/javascript">
         var _gaq = _gaq || [];
         _gaq.push(['_setAccount', 'UA-23748117-2']);
@@ -53,20 +43,26 @@
                         <li>
                             <a href='index.php'>Wall</a>
                         </li>
-                        <li class='active'>
+                        <li>
                             <a href='timelapse.html'>Timelapse</a>
                         </li>
-                        <li>
+                        <li class='active'>
                             <a href='about.html'>About</a>
                         </li>
                         <li class='divider-vertical'></li>
                     </ul>
-                    
-                    <span id='progress' class='navbar-text'> </span>
                 </div>
             </div>
         </div>
     </div>
-    <div id='main_content'></div>
+    <div id='main_content' class='container'>
+        <div class='hero-unit'>
+            <h1>What is this?</h1>
+            <p>Its an Online graffiti wall, Draw something and other people will see it in real time!</p>
+            <p>Created with the help of paper.js and canvas html5 element. Timelapse loops through some of the history of whats been drawn</p>
+            <p>I built this for fun and as a scalability challange. If you like it drop me a tweet, i am <a href='http://twitter.com/#!/yarekt'>@yarekt</a></p>
+            <p><a href='index.php' class="btn btn-primary btn-large">Go to the wall! &raquo;</a></p>
+        </div>
+    </div>
 </body>
 </html>
