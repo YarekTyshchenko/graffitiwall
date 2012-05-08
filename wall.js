@@ -1,11 +1,15 @@
 var updateDelay = 2000;
 
 // Attach color event handlers
-$('#colour-selector').on('click', 'a', function(){
+$('#colour-selector').on('click', 'a', function(e){
+    e.preventDefault();
+    
     selectColor($(this).parent().index());
 });
 
-$('#brush-selector').on('click', 'a', function(){
+$('#brush-selector').on('click', 'a', function(e){
+    e.preventDefault();
+
     $('#brush-selector li').removeClass('active');
     $(this).parent().addClass('active');
     
