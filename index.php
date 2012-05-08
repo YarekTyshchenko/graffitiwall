@@ -13,7 +13,9 @@
         body {
             overflow: hidden;
         }
-
+        #noScriptImage {
+            max-width: none;
+        }
         #canvas {
             cursor: crosshair;
         }
@@ -110,7 +112,7 @@
     </div>
     <div id='main_content' class='row-fluid'>
         <canvas id="canvas" keepalive="true" width=500 height=200 resize>
-            <img src='last.php' alt='Latest Graffiti wall image' title='You do not have html5 canvas support'/>
+            <img id='noScriptImage' src='last.php' alt='Latest Graffiti wall image' title='You do not have html5 canvas support'/>
         </canvas>
     </div>
 </body>
