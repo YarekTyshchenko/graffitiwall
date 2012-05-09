@@ -11,8 +11,8 @@ if (isset($_GET['p'])) {
 	// container to send
 	$points = array();
 
-	$db = new DB();
 	if (FILE) {
+		$db = new DB();
 		$file_handle = fopen('pointsData.log','r');
 		$i = 0;
 		while ($buffer = fgets($file_handle)) {

@@ -52,11 +52,17 @@ class DB {
     {
         $start = $page * $size;
         
-        $query = $this->_getPreparedChunk();
-        $query->bind_param('ii', $start, $size);
-        $query->execute();
-        $result = $query->get_result();
-        $points = $result->fetch_all();
+        $result = $this->_getDb()->query("SELECT data FROM points ORDER BY id ASC LIMIT $start, $size");
+        //$query = $this->_getPreparedChunk();
+        //$query->bind_param('ii', $start, $size);
+        //$query->execute();
+        //$result = $query->get_result();
+
+        $points = array();
+        while($point = $result->fetch_array(MYSQLI_ASSOC)) {
+            $points[] = $point['data'];
+        }
+
         return $points;
     }
 }
