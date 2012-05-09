@@ -95,17 +95,6 @@ function getSavedImage()
 {
     global $db;
     return $db->getLastImage();
-
-    // Legacy
-    $file_handle = fopen('pointsData.log','r');
-    $image = '';
-    while ($buffer = fgets($file_handle)) {
-        $image = $buffer;
-    }
-
-    $savedImageData = trim($image);
-    fclose($file_handle);
-    return $savedImageData;
 }
 
 function getPostImage()
@@ -122,13 +111,4 @@ function saveImage($data)
 {
     global $db;
     $db->insert($data);
-    return;
-
-    // Legacy
-    file_put_contents(
-        'pointsData.log',
-        $data.PHP_EOL,
-        FILE_APPEND
-    );
-
 }

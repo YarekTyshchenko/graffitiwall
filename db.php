@@ -37,7 +37,6 @@ class DB {
         $query = $this->_getPreparedInsert();
         $query->bind_param('s', $data);
         $query->execute();
-        $query->close();
     }
 
     public function getLastImage()
