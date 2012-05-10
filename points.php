@@ -51,8 +51,8 @@ $savedImageSize = array(
 
 // Create a blank canvas size of the biggest image
 $newImageSize = array(
-    'x' => max($postImageSize['x'], $savedImageSize['x']),
-    'y' => max($postImageSize['y'], $savedImageSize['y'])
+    'x' => 2560,
+    'y' => 1600
 );
 $newImage = imagecreatetruecolor($newImageSize['x'], $newImageSize['y']);
 if (TYPE === 'png') {

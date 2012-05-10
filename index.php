@@ -81,22 +81,23 @@
                     <span id='debug' class='navbar-text'></span>
                     
                     <ul id='colour-selector' class='nav pull-right'>
-                        <li><a href='#'><div style='background-color: #FF0000'></div></a></li>
-                        <li><a href='#'><div style='background-color: #FF8000'></div></a></li>
-                        <li><a href='#'><div style='background-color: #FFFF00'></div></a></li>
-                        <li><a href='#'><div style='background-color: #80FF00'></div></a></li>
-                        <li><a href='#'><div style='background-color: #00FF00'></div></a></li>
-                        <li><a href='#'><div style='background-color: #00FF80'></div></a></li>
-                        <li><a href='#'><div style='background-color: #00FFFF'></div></a></li>
-                        <li><a href='#'><div style='background-color: #0080FF'></div></a></li>
-                        <li><a href='#'><div style='background-color: #0000FF'></div></a></li>
-                        <li><a href='#'><div style='background-color: #8000FF'></div></a></li>
-                        <li><a href='#'><div style='background-color: #FF00FF'></div></a></li>
-                        <li><a href='#'><div style='background-color: #FF0080'></div></a></li>
-                        <li><a href='#'><div style='background-color: #4C4C4C'></div></a></li>
-                        <li><a href='#'><div style='background-color: #333333'></div></a></li>
-                        <li><a href='#'><div style='background-color: #B3B3B3'></div></a></li>
-                        <li><a href='#'><div style='background-color: #CCCCCC'></div></a></li>
+                        <li><a href='#'><div style='background-color: #F1F1F2'></div></a></li>
+                        <li><a href='#'><div style='background-color: #929497'></div></a></li>
+                        <li><a href='#'><div style='background-color: #404041'></div></a></li>
+                        <li><a href='#'><div style='background-color: #FBDEEF'></div></a></li>
+                        <li><a href='#'><div style='background-color: #E000A7'></div></a></li>
+                        <li><a href='#'><div style='background-color: #7F25CF'></div></a></li>
+                        <li><a href='#'><div style='background-color: #2000BF'></div></a></li>
+                        <li><a href='#'><div style='background-color: #2248E3'></div></a></li>
+                        <li><a href='#'><div style='background-color: #0099DA'></div></a></li>
+                        <li><a href='#'><div style='background-color: #66CCFF'></div></a></li>
+                        <li><a href='#'><div style='background-color: #12E37D'></div></a></li>
+                        <li><a href='#'><div style='background-color: #3CD113'></div></a></li>
+                        <li><a href='#'><div style='background-color: #9E9600'></div></a></li>
+                        <li><a href='#'><div style='background-color: #FFF400'></div></a></li>
+                        <li><a href='#'><div style='background-color: #F26B0A'></div></a></li>
+                        <li><a href='#'><div style='background-color: #EC1F2F'></div></a></li>
+                        <li><a href='#'><div style='background-color: #753E33'></div></a></li>
                     </ul>
                     <ul id='brush-selector' class='nav pull-right'>
                         <li><span class='navbar-text'>Brush Size</span></li>

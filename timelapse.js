@@ -40,10 +40,11 @@ function runLapseFrame() {
         }
     }
     if (lines.length > 0) {
+        draw(lines.shift());
+    } else {
         if (!run) {
             clearInterval(interval);
         }
-        draw(lines.shift());
     }
 }
 
