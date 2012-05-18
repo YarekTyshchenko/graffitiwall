@@ -23,13 +23,13 @@ if (!$savedImageData) {
     imagedestroy($postImage);
 
     saveImage($renderedImage);
-    echo $renderedImage;
+    echo displayImage($renderedImage);
     exit;
 }
 
 // POST is missing, Saved is present
 if (!$postImageData) {
-    echo trim($savedImageData);
+    echo displayImage($savedImageData);
     exit;
 }
 
@@ -75,10 +75,10 @@ imagedestroy($postImage);
 $renderedImage = getImage($newImage);
 imagedestroy($newImage);
 
-$encodedImage = 'data:image/'.TYPE.';base64,'.base64_encode($renderedImage);
+$encodedImage = encodeImage($renderedImage);
 
 saveImage($encodedImage);
-echo $encodedImage;
+echo displayImage($encodedImage);
 
 // EOF
 
@@ -88,6 +88,11 @@ function getImage($image)
     ob_start();
     $imageoutput($image);
     return ob_get_clean();
+}
+
+function encodeImage($data)
+{
+    return 'data:image/'.TYPE.';base64,'.base64_encode($data);
 }
 
 
@@ -111,4 +116,33 @@ function saveImage($data)
 {
     global $db;
     $db->insert($data);
+}
+
+function getViewportSize()
+{
+    if (!empty($_POST['viewport_x']) && !empty($_POST['viewport_y'])) {
+        return array(
+            'x' => $_POST['viewport_x'],
+            'y' => $_POST['viewport_y']
+        );
+    }
+    return array(
+            'x' => 2560,
+            'y' => 1600
+        );
+}
+
+function displayImage($data)
+{
+    global $imagecreate;
+    $viewportSize = getViewportSize();
+    $image = $imagecreate(str_replace('data:', 'data://', trim($data)));
+
+    $displayImage = imagecreatetruecolor($viewportSize['x'], $viewportSize['y']);
+
+    imagecopy($displayImage, $image, 0, 0, 0, 0, $viewportSize['x'], $viewportSize['y']);
+    imagedestroy($image);
+
+    return encodeImage(getImage($displayImage));
+
 }

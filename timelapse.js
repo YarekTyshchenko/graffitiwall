@@ -54,7 +54,11 @@ function getLines() {
         cache: false,
         async: true,
         dataType: 'json',
-        data: {p: p},
+        data: {
+            viewport_x: $('#main_content').width(),
+            viewport_y: $('#main_content').height(),
+            p: p
+        },
         success: function(data) {
             loading = false;
             $('#progress').removeClass('loading');

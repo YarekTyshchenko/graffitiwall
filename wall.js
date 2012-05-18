@@ -140,15 +140,17 @@ function sendPath() {
         
         var newList = [];
 
-        var data = {};
+        var data = {
+            viewport_x: view.size.width,
+            viewport_y: view.size.height
+        };
+
         if (dirty || path.segments.length > 1) {
             dirty = false;
             control.visible = false;
             view.draw();
-            data = {
-                // deflate this string
-                data: view.getCanvas().toDataURL()
-            };
+            // deflate this string
+            data.data = view.getCanvas().toDataURL();
             control.visible = true;
 
             // Create a new path
