@@ -103,8 +103,8 @@
                         <li><span class='navbar-text'>Brush Size</span></li>
                         <li class='divider-vertical'></li>
                         <li><a href='#' data-size='10'>Small</a></li>
-                        <li><a href='#' data-size='20'>Medium</a></li>
-                        <li class='active'><a href='#' data-size='30'>Large</a></li>
+                        <li class='active'><a href='#' data-size='20'>Medium</a></li>
+                        <li><a href='#' data-size='30'>Large</a></li>
                         <li class='divider-vertical'></li>
                     </ul>
                 </div>

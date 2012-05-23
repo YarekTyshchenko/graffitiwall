@@ -7,7 +7,7 @@ $('#colour-selector').on('click', 'a', function(e){
     selectColor($(this).parent().index());
 });
 
-var sessionWidth = 30;
+var sessionWidth = $('#brush-selector li.active a').data('size');
 $('#brush-selector').on('click', 'a', function(e){
     e.preventDefault();
 
