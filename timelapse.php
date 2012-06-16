@@ -1,7 +1,7 @@
 <?php
 require('db.php');
 
-$chunk = 10;
+$chunk = 15;
 if (isset($_GET['p'])) {
 	// p = Page
 	$p = $_GET['p'];

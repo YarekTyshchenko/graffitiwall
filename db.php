@@ -51,7 +51,11 @@ class DB {
     {
         $start = $page * $size;
         
-        $result = $this->_getDb()->query("SELECT data FROM points ORDER BY id ASC LIMIT $start, $size");
+        $result = $this->_getDb()->query(
+            "SELECT data FROM points
+            WHERE DATE_SUB(CURDATE(), INTERVAL 30 DAY) <= created
+            ORDER BY id ASC LIMIT $start, $size"
+        );
         //$query = $this->_getPreparedChunk();
         //$query->bind_param('ii', $start, $size);
         //$query->execute();
