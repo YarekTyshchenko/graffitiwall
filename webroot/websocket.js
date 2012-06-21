@@ -89,6 +89,19 @@ var resizeCanvas = function() {
     });
 }
 
+var message = function(msg) {
+    newData = $.parseJSON(msg.data);
+    $('#connected').text(newData.connected);
+
+    circle(newData.x, newData.y, newData.width, newData.color);
+    if (newData.join) {
+        // draw line from center of newData to data
+        line(data.x, data.y, newData.x, newData.y, data.width, data.color);
+    }
+
+    data = newData;
+};
+
 $(function(){
     resizeCanvas();
     $(window).resize(resizeCanvas);
@@ -119,19 +132,6 @@ $(function(){
 
     ctx = $('#canvas')[0].getContext('2d');
     // Lets hook it all up
-    var message = function(msg) {
-        newData = $.parseJSON(msg.data);
-        $('#connected').text(newData.connected);
-
-        circle(newData.x, newData.y, newData.width, newData.color);
-        if (newData.join) {
-            // draw line from center of newData to data
-            line(data.x, data.y, newData.x, newData.y, data.width, data.color);
-        }
-
-        data = newData;
-
-    };
     init(message);
 
 
@@ -140,7 +140,7 @@ $(function(){
         click = true;
         point(e.offsetX, e.offsetY, false);
     });
-    $('#canvas').mouseup(function(e){
+    $(window).mouseup(function(e){
         click = false;
     });
 
