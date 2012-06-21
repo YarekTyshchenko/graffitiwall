@@ -2,7 +2,6 @@
 class Handler extends WebSocketUriHandler{
 	public function onMessage(IWebSocketConnection $currentUser, IWebSocketMessage $msg){
 		$parts = explode("\xff\x00", $msg->getData());
-		$this->say(print_r($parts, true));
 		$messages = array();
 		foreach ($parts as $part) {
 			$data = json_decode($part, true);
