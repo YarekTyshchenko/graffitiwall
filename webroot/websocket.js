@@ -26,12 +26,18 @@ function send(message){
 
 var ctx;
 var list = [];
-var data;
 var start;
 
 function point(x, y, join) {
+    var prev = {};
     if (join) {
         line(start.x, start.y, x, y, start.width, start.color);
+        prev = {
+            x: start.x,
+            y: start.y,
+            width: start.width,
+            color: start.color
+        };
     }
     circle(x, y, sessionWidth, sessionColor);
 
@@ -40,7 +46,8 @@ function point(x, y, join) {
         y: y,
         width: sessionWidth,
         color: sessionColor,
-        join: join
+        join: join,
+        prev: prev
     };
     
     send(start);
@@ -91,16 +98,14 @@ var resizeCanvas = function() {
 
 var message = function(msg) {
     dataArray = $.parseJSON(msg.data);
-    $.each(dataArray, function(key, newData){
-        $('#connected').text(newData.connected);
+    $.each(dataArray, function(key, data){
+        $('#connected').text(data.connected);
 
-        circle(newData.x, newData.y, newData.width, newData.color);
-        if (newData.join) {
+        circle(data.x, data.y, data.width, data.color);
+        if (data.join) {
             // draw line from center of newData to data
-            line(data.x, data.y, newData.x, newData.y, data.width, data.color);
+            line(data.prev.x, data.prev.y, data.x, data.y, data.prev.width, data.prev.color);
         }
-
-        data = newData;
     });
 };
 
