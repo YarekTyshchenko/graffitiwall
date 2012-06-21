@@ -104,6 +104,24 @@ var message = function(msg) {
     });
 };
 
+function getPosition(e) {
+    var targ;
+    if (!e)
+        e = window.event;
+    if (e.target)
+        targ = e.target;
+    else if (e.srcElement)
+        targ = e.srcElement;
+    if (targ.nodeType == 3) // defeat Safari bug
+        targ = targ.parentNode;
+
+    var x = e.pageX - $(targ).offset().left;
+    var y = e.pageY - $(targ).offset().top;
+
+    return {"x": x, "y": y};
+};
+
+
 $(function(){
     resizeCanvas();
     $(window).resize(resizeCanvas);
@@ -140,7 +158,8 @@ $(function(){
     var click = false;
     $('#canvas').mousedown(function(e){
         click = true;
-        point(e.offsetX, e.offsetY, false);
+        p = getPosition(e);
+        point(p.x, p.y, false);
     });
     $(window).mouseup(function(e){
         click = false;
@@ -148,7 +167,8 @@ $(function(){
 
     $('#canvas').mousemove(function(e){
         if (click) {
-            point(e.offsetX, e.offsetY, true);
+            p = getPosition(e);
+            point(p.x, p.y, true);
         }
     });
 });
