@@ -23,11 +23,9 @@ class Handler extends WebSocketUriHandler{
 
 	public function addConnection(IWebSocketConnection $user){
 		$data = file_get_contents('points.log');
-		$output = array();
-		foreach (explode(PHP_EOL, $data) as $line) {
-			$output[] = json_decode($line, true);
-		}
-		$user->sendString(json_encode($output));
+		$output = '[' . str_replace(PHP_EOL, ',', trim($data)) . ']';
+
+		$user->sendString($output);
 		$this->users->attach($user);
 	}
 
