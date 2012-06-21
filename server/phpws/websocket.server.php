@@ -39,7 +39,7 @@ class WebSocketServer implements WebSocketObserver{
 	 */
 	protected $_observers = array();
 
-	protected $debug = true;
+	protected $debug = false;
 
 	protected $purgeUserTimeOut = null;
 

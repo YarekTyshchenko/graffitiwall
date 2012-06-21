@@ -31,9 +31,9 @@ var start;
 
 function point(x, y, join) {
     if (join) {
-        //line(start.x, start.y, x, y, start.width, start.color);
+        line(start.x, start.y, x, y, start.width, start.color);
     }
-    //circle(x, y, sessionWidth, sessionColor);
+    circle(x, y, sessionWidth, sessionColor);
 
     start = {
         x: x,
