@@ -4,45 +4,17 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Graffiti Wall</title>
     <!--
-        This site is basically @yarekt 's catnip: html5 and paper.js plaything
+        This site is basically @yarekt 's catnip: html5 and WebSocket plaything
     -->
     <meta name="Description" content="Distributed online Graffiti Wall built with canvas, HTML5 and JavaScript paper.js, Visit to see lots of people draw in real-time on the same space ! Built by @yarekt">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            overflow: hidden;
-        }
-        #noScriptImage {
-            max-width: none;
-        }
-        #canvas {
-            cursor: crosshair;
-        }
-        
-        #main_content {
-            padding-top: 40px;
-        }
-        #colour-selector a {
-            padding-left: 2px;
-            padding-right: 2px;
-        }
-        #colour-selector a:hover div {
-            border-color: black;
-        }
-        #colour-selector a div.active {
-            border-color: white;
-        }
-        #colour-selector a > div {
-            width: 10px;
-            height: 18px;
-            border: 1px solid gray;
-            overflow: hidden;
-        }
-    </style>
-    <script type="text/javascript" src="paper.js"></script>
+    <link href="css/main.css" rel="stylesheet">
+
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script type="text/paperscript" canvas="canvas" src='wall.js'></script>
+    <!--script type="text/javascript" src="paper.js"></script-->
+    <!--script type="text/paperscript" canvas="canvas" src='wall.js'></script-->
+    <script type="text/javascript" src="websocket.js"></script>
     <script type="text/javascript">
         var _gaq = _gaq || [];
         _gaq.push(['_setAccount', 'UA-23748117-2']);
@@ -56,15 +28,15 @@
     </script>
 </head>
 <body>
-    <div class="navbar navbar-fixed-top">
+    <div class="navbar navbar-fixed-top"> <!---->
         <div class="navbar-inner">
             <div class="container">
                 <span class='brand'>Graffiti Wall</span>
                 <div class='nav-collapse'>
-                    <ul class='nav'>
+                    <!--ul class='nav'>
                         <li class='divider-vertical'></li>
                         <li class='active'>
-                            <a href='index.php'>Wall</a>
+                            <a href='index.html'>Wall</a>
                         </li>
                         <li>
                             <a href='timelapse.html'>Timelapse</a>
@@ -73,10 +45,10 @@
                             <a href='about.html'>About</a>
                         </li>
                         <li class='divider-vertical'></li>
-                    </ul>
+                    </ul-->
                     
-                    <!--span class='navbar-text'>Connected:</span>
-                    <span id='connected' class='navbar-text'>0</span-->
+                    <span class='navbar-text'>Connected:</span>
+                    <span id='connected' class='navbar-text'>0</span>
                     
                     <span id='debug' class='navbar-text'></span>
                     
@@ -102,18 +74,18 @@
                     <ul id='brush-selector' class='nav pull-right'>
                         <li><span class='navbar-text'>Brush Size</span></li>
                         <li class='divider-vertical'></li>
-                        <li><a href='#' data-size='10'>Small</a></li>
-                        <li class='active'><a href='#' data-size='20'>Medium</a></li>
-                        <li><a href='#' data-size='30'>Large</a></li>
+                        <li><a href='#' data-size='5'>Small</a></li>
+                        <li class='active'><a href='#' data-size='10'>Medium</a></li>
+                        <li><a href='#' data-size='15'>Large</a></li>
                         <li class='divider-vertical'></li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
-    <div id='main_content' class='row-fluid'>
-        <canvas id="canvas" keepalive="true" width=500 height=200 resize>
-            <img id='noScriptImage' src='last.php' alt='Latest Graffiti wall image' title='You do not have html5 canvas support'/>
+    <div id='main_content'>
+        <canvas id="canvas" keepalive="true">
+            <!--img id='noScriptImage' src='last.php' alt='Latest Graffiti wall image' title='You do not have html5 canvas support'/-->
         </canvas>
     </div>
 </body>
