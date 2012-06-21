@@ -1,13 +1,21 @@
 <?php
 class Handler extends WebSocketUriHandler{
+	protected $debug = false;
 	public function onMessage(IWebSocketConnection $currentUser, IWebSocketMessage $msg){
-		$message = json_decode($msg->getData(), true);
-		$message['connected'] = count($this->users);
-		$packed = json_encode($message);
+		$parts = explode('?', $msg->getData());
+		$this->say("Message came in ".count($parts).' parts');
+		$messages = array();
+		foreach ($parts as $part) {
+			$data = json_decode($part, true);
+			$data['connected'] = count($this->users);
+			$messages[] = $data; 
+		}
+		$packed = json_encode($messages);
+		
 		foreach($this->users as $user){
-			if ($user->getId() !== $currentUser->getId()){
+			//if ($user->getId() !== $currentUser->getId()){
 				$user->sendString($packed);
-			}
+			//}
 		}
 
 		// Draw on image

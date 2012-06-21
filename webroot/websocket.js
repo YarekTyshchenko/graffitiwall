@@ -31,9 +31,9 @@ var start;
 
 function point(x, y, join) {
     if (join) {
-        line(start.x, start.y, x, y, start.width, start.color);
+        //line(start.x, start.y, x, y, start.width, start.color);
     }
-    circle(x, y, sessionWidth, sessionColor);
+    //circle(x, y, sessionWidth, sessionColor);
 
     start = {
         x: x,
@@ -90,16 +90,18 @@ var resizeCanvas = function() {
 }
 
 var message = function(msg) {
-    newData = $.parseJSON(msg.data);
-    $('#connected').text(newData.connected);
+    dataArray = $.parseJSON(msg.data);
+    $.each(dataArray, function(key, newData){
+        $('#connected').text(newData.connected);
 
-    circle(newData.x, newData.y, newData.width, newData.color);
-    if (newData.join) {
-        // draw line from center of newData to data
-        line(data.x, data.y, newData.x, newData.y, data.width, data.color);
-    }
+        circle(newData.x, newData.y, newData.width, newData.color);
+        if (newData.join) {
+            // draw line from center of newData to data
+            line(data.x, data.y, newData.x, newData.y, data.width, data.color);
+        }
 
-    data = newData;
+        data = newData;
+    });
 };
 
 $(function(){
