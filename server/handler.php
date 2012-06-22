@@ -4,12 +4,21 @@ class Handler extends WebSocketUriHandler{
 		$parts = explode("\xff\x00", $msg->getData());
 		$messages = array();
 		foreach ($parts as $part) {
-			file_put_contents('points.log', $part.PHP_EOL, FILE_APPEND);
 			$data = json_decode($part, true);
-			$data['connected'] = count($this->users);
-			$messages[] = $data; 
+			switch ($data['meta']['type']) {
+				case 'd':
+					$this->_saveData(json_encode($data['data']));
+					$messages[] = $data['data'];
+					break;
+				case 'c':
+					$currentUser->sendString($this->_getData());
+					break;
+			}
 		}
-		$packed = json_encode($messages);
+		$packed = json_encode(array(
+			'meta' => array('connected' => count($this->users)),
+			'array' => $messages
+		));
 		
 		foreach($this->users as $user){
 			if ($user->getId() !== $currentUser->getId()){
@@ -21,18 +30,17 @@ class Handler extends WebSocketUriHandler{
 		// Save image
 	}
 
-	public function addConnection(IWebSocketConnection $user){
+	private function _getData()
+	{
 		$data = file_get_contents('points.log');
-		$output = '[' . str_replace(PHP_EOL, ',', trim($data)) . ']';
+		$output = '{"meta":{"connected":"' . count($this->users)
+			. '"},"array":[' . str_replace(PHP_EOL, ',', trim($data)) . ']}';
 
-		$user->sendString($output);
-		$this->users->attach($user);
+		return $output;
 	}
 
-	public function onAdminMessage(IWebSocketConnection $user, IWebSocketMessage $obj){
-		$this->say("Admin TEST received!");
-
-		$frame = WebSocketFrame::create(WebSocketOpcode::PongFrame);
-		$user->sendFrame($frame);
+	private function _saveData($data)
+	{
+		file_put_contents('points.log', $data.PHP_EOL, FILE_APPEND);
 	}
 }

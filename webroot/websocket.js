@@ -7,21 +7,40 @@ function createSocket(host){
         return new MozWebSocket(host);
 }
 
-function init(messageCallback){
+function init(){
     var host = "ws://" + window.location.host + ":12345/wall";
     socket = createSocket(host);
 
     socket.onopen = function(msg) {
-        // Ready
+        connected = true;
+        send({}, 'c');
+
     };
     socket.onclose = function(msg) {
-        // Start retrying
+        connected = false;
+        setTimeout(init, 1000);
     };
-    socket.onmessage = messageCallback;
+    socket.onmessage = function(msg) {
+        var message = $.parseJSON(msg.data);
+        if (message.meta.connected) {
+           $('#connected').text(message.meta.connected);
+        }
+        $.each(message.array, function(key, data){
+            draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
+        });
+    };
 }
 
-function send(message){
-    socket.send(JSON.stringify(message));
+function send(message, type){
+    var data = {
+        meta: {
+            type: type
+        },
+        data: message
+    }
+    if (connected) {
+        socket.send(JSON.stringify(data));
+    }
 }
 
 var ctx;
@@ -30,7 +49,7 @@ function point(x1, y1, x2, y2) {
     
     draw(x1, y1, x2, y2, sessionWidth, sessionColor);
 
-    data = {
+    var data = {
         x1: x1,
         y1: y1,
         x2: x2,
@@ -39,7 +58,7 @@ function point(x1, y1, x2, y2) {
         color: sessionColor
     };
     
-    send(data);
+    send(data, 'd');
 }
 
 function draw(x1, y1, x2, y2, width, color) {
@@ -80,14 +99,6 @@ var resizeCanvas = function() {
         height: $('#main_content').height()
     });
 }
-
-var message = function(msg) {
-    dataArray = $.parseJSON(msg.data);
-    $.each(dataArray, function(key, data){
-        $('#connected').text(data.connected);
-        draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
-    });
-};
 
 function getPosition(e) {
     var targ;
@@ -137,8 +148,7 @@ $(function(){
 
     ctx = $('#canvas')[0].getContext('2d');
     // Lets hook it all up
-    init(message);
-
+    init();
 
     var click = false;
     $('#canvas').mousedown(function(e){
