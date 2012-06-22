@@ -25,55 +25,40 @@ function send(message){
 }
 
 var ctx;
-var list = [];
-var start;
 
-function point(x, y, join) {
-    var prev = {};
-    if (join) {
-        line(start.x, start.y, x, y, start.width, start.color);
-        prev = {
-            x: start.x,
-            y: start.y,
-            width: start.width,
-            color: start.color
-        };
-    }
-    circle(x, y, sessionWidth, sessionColor);
+function point(x1, y1, x2, y2) {
+    
+    draw(x1, y1, x2, y2, sessionWidth, sessionColor);
 
-    start = {
-        x: x,
-        y: y,
+    data = {
+        x1: x1,
+        y1: y1,
+        x2: x2,
+        y2: y2,
         width: sessionWidth,
-        color: sessionColor,
-        join: join,
-        prev: prev
+        color: sessionColor
     };
     
-    send(start);
+    send(data);
 }
 
-function circle(x, y, r, color) {
+function draw(x1, y1, x2, y2, width, color) {
     ctx.fillStyle = color;
     ctx.strokeStyle = color;
+    ctx.lineWidth = width*2;
 
     ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI*2, true);
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+    ctx.closePath();
+
+    ctx.beginPath();
+    ctx.arc(x1, y1, width, 0, Math.PI*2, true);
     ctx.closePath();
     ctx.fill();
 }
 
-function line(x1, y1, x2, y2, width, color) {
-    ctx.fillStyle = color;
-    ctx.strokeStyle = color;
-
-    ctx.lineWidth = width*2;
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-    ctx.closePath();
-}
 var sessionWidth;
 var sessionColor;
 var colorlist = [];
@@ -100,12 +85,7 @@ var message = function(msg) {
     dataArray = $.parseJSON(msg.data);
     $.each(dataArray, function(key, data){
         $('#connected').text(data.connected);
-
-        circle(data.x, data.y, data.width, data.color);
-        if (data.join) {
-            // draw line from center of newData to data
-            line(data.prev.x, data.prev.y, data.x, data.y, data.prev.width, data.prev.color);
-        }
+        draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
     });
 };
 
@@ -126,7 +106,7 @@ function getPosition(e) {
     return {"x": x, "y": y};
 };
 
-
+var p;
 $(function(){
     resizeCanvas();
     $(window).resize(resizeCanvas);
@@ -164,7 +144,7 @@ $(function(){
     $('#canvas').mousedown(function(e){
         click = true;
         p = getPosition(e);
-        point(p.x, p.y, false);
+        point(p.x, p.y, p.x, p.y);
     });
     $(window).mouseup(function(e){
         click = false;
@@ -172,8 +152,9 @@ $(function(){
 
     $('#canvas').mousemove(function(e){
         if (click) {
-            p = getPosition(e);
-            point(p.x, p.y, true);
+            var np = getPosition(e);
+            point(np.x, np.y, p.x, p.y);
+            p = np;
         }
     });
 });
