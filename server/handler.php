@@ -30,6 +30,19 @@ class Handler extends WebSocketUriHandler{
 		// Save image
 	}
 
+	public function onDisconnect(IWebSocketConnection $currentUser)
+	{
+		$packed = json_encode(array(
+			'meta' => array('connected' => count($this->users)),
+			'array' => array()
+		));
+		foreach($this->users as $user){
+			if ($user->getId() !== $currentUser->getId()){
+				$user->sendString($packed);
+			}
+		}
+	}
+
 	private function _getData()
 	{
 		$data = file_get_contents('points.log');
