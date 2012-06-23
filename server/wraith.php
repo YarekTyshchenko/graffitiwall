@@ -48,7 +48,7 @@ class Wraith
         }
         echo 'Written Temp File'.PHP_EOL;
         $startSwitch = microtime(true);
-        $newLines = file_get_contents($outputFile);
+        $newLines = @file_get_contents($outputFile);
         file_put_contents('temp.log', $newLines, FILE_APPEND);
         rename('temp.log', $outputFile);
         $switch = microtime(true) - $startSwitch;

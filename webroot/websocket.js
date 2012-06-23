@@ -14,6 +14,7 @@ function init(){
     socket.onopen = function(msg) {
         connected = true;
         send({}, 'c');
+        $('#connected').text('Loading...');
 
     };
     socket.onclose = function(msg) {
@@ -22,12 +23,13 @@ function init(){
     };
     socket.onmessage = function(msg) {
         var message = $.parseJSON(msg.data);
-        if (message.meta.connected) {
-           $('#connected').text(message.meta.connected);
-        }
         $.each(message.array, function(key, data){
             draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
         });
+        if (message.meta.connected) {
+           $('#connected').text(message.meta.connected);
+        }
+
     };
 }
 
