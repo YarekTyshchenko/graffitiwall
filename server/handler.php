@@ -45,7 +45,7 @@ class Handler extends WebSocketUriHandler{
 
 	private function _getData()
 	{
-		$data = file_get_contents('points.log');
+		$data = file_get_contents('backup.log') . file_get_contents('points.log');
 		$output = '{"meta":{"connected":"' . count($this->users)
 			. '"},"array":[' . str_replace(PHP_EOL, ',', trim($data)) . ']}';
 

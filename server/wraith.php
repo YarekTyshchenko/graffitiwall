@@ -10,7 +10,7 @@ class Wraith
     {
         $contents = file_get_contents($file);
         // Clear output file
-        rename($outputFile, 'backup-'.$outputFile);
+        rename($outputFile, 'backup.log');
         file_put_contents($outputFile, '');
 
         // Continue processing
@@ -51,6 +51,7 @@ class Wraith
         $newLines = @file_get_contents($outputFile);
         file_put_contents('temp.log', $newLines, FILE_APPEND);
         rename('temp.log', $outputFile);
+        file_put_contents('backup.log', '');
         $switch = microtime(true) - $startSwitch;
         echo 'Completed bait and switch ('.strlen($newLines).'b) in '.number_format($switch).' s'.PHP_EOL;
     }
