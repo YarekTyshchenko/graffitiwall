@@ -6,16 +6,22 @@ class Wraith
     protected $_lines = array();
     protected $_culled = 0;
 
-    protected function _open($file)
+    protected function _open($file, $outputFile)
     {
-        $lines = explode(PHP_EOL, trim(file_get_contents($file)));
+        $contents = file_get_contents($file);
+        // Clear output file
+        rename($outputFile, 'backup-'.$outputFile);
+        file_put_contents($outputFile, '');
+
+        // Continue processing
+        $lines = explode(PHP_EOL, trim($contents));
         $this->_lines = array_reverse($lines);
     }
 
     public function cull($file, $outputFile)
     {
         $start = microtime(true);
-        $this->_open($file);
+        $this->_open($file, $outputFile);
 
         // loop through file
         foreach ($this->_lines as $key => $rawLine) {
@@ -34,12 +40,19 @@ class Wraith
             }
         }
         $end = microtime(true) - $start;
-        echo 'Culled '. $this->_culled . ' / '.count($this->_lines).' lines in '. round($end) . ' s'.PHP_EOL;
+        echo 'Culled '. $this->_culled . ' / '.count($this->_lines).' lines in '. number_format($end) . ' s'.PHP_EOL;
         $a = array_reverse($this->_output);
-        file_put_contents($outputFile, '');
+        file_put_contents('temp.log', '');
         foreach ($a as $line) {
-            file_put_contents($outputFile, $line.PHP_EOL, FILE_APPEND);
+            file_put_contents('temp.log', $line.PHP_EOL, FILE_APPEND);
         }
+        echo 'Written Temp File'.PHP_EOL;
+        $startSwitch = microtime(true);
+        $newLines = file_get_contents($outputFile);
+        file_put_contents('temp.log', $newLines, FILE_APPEND);
+        rename('temp.log', $outputFile);
+        $switch = microtime(true) - $startSwitch;
+        echo 'Completed bait and switch ('.strlen($newLines).'b) in '.number_format($switch).' s'.PHP_EOL;
     }
 
     protected function _drawRect($x1, $y1, $x2, $y2, $w, $output)
