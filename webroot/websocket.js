@@ -47,7 +47,6 @@ function init(){
 var list = [];
 var moreRequested = false;
 function animate(total) {
-    $('#debug').text('Loading: '+list.length);
     var data = list.shift();
     if (data) {
         draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
