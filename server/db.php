@@ -31,6 +31,11 @@ class DB {
         $this->_getDb()->query("DELETE FROM points WHERE id = $id");
     }
 
+    public function debug($id)
+    {
+        $this->_getDb()->query("UPDATE points SET color = 'rgb(0,0,0)' WHERE id = $id");
+    }
+
     public function insert($x1, $y1, $x2, $y2, $width, $color)
     {
         $query = $this->_getPreparedInsert();

@@ -26,9 +26,9 @@ function init(){
         var message = $.parseJSON(msg.data);
         if (message.meta.animation) {
             page = page + 1000;
-            list.push.apply(list, message.array);
             moreRequested = false;
             if (message.array.length) {
+                list.push.apply(list, message.array);
                 animate();
             }
             
@@ -47,16 +47,15 @@ function init(){
 var list = [];
 var moreRequested = false;
 function animate(total) {
-    $('#connected').text(list.length);
-    if (list.length < 500 && ! moreRequested) {
-        moreRequested = true;
-        send({}, {type:'c', page: page});
-    }
+    $('#debug').text('Loading: '+list.length);
     var data = list.shift();
     if (data) {
         draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
         //setTimeout(animate, 1);
         animate();
+    } else if (! moreRequested) {
+        moreRequested = true;
+        send({}, {type:'c', page: page});
     }
 }
 

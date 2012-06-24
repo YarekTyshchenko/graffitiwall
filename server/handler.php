@@ -59,6 +59,9 @@ class Handler extends WebSocketUriHandler{
 
 	private function _saveData($data)
 	{
+		if ($data['width'] < 3 || $data['width'] > 20) {
+			$data['width'] = 10;
+		}
 		$this->_getDb()->insert(
 			$data['x1'],
 			$data['y1'],
