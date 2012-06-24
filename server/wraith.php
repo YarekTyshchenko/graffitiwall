@@ -67,7 +67,7 @@ class Wraith
             for ($x = 0; $x <= (max($x1, $x2) + $w) - (min($x1, $x2) - $w); $x++) {
                 for ($y = 0; $y <= (max($y1, $y2) + $w) - (min($y1, $y2) - $w); $y++) {
                     list($d, $outside) = $this->_p($x1, $y1, $x2, $y2, $x1+$x, $y1+$y);
-                    if (floor($d) < $w && !$outside) {
+                    if (floor($d) <= $w && !$outside) {
                         if (! isset($this->_buffer[$x1 + $x][$y1 + $y])) {
                             $return = false;
                             $this->_buffer[$x1 + $x][$y1 + $y] = true;
