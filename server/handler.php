@@ -1,5 +1,9 @@
 <?php
+include 'DB.php';
+
 class Handler extends WebSocketUriHandler{
+	protected $_db;
+
 	public function onMessage(IWebSocketConnection $currentUser, IWebSocketMessage $msg){
 		$parts = explode("\xff\x00", $msg->getData());
 		$messages = array();
@@ -7,7 +11,7 @@ class Handler extends WebSocketUriHandler{
 			$data = json_decode($part, true);
 			switch ($data['meta']['type']) {
 				case 'd':
-					$this->_saveData(json_encode($data['data']));
+					$this->_saveData($data['data']);
 					$messages[] = $data['data'];
 					break;
 				case 'c':
@@ -45,15 +49,31 @@ class Handler extends WebSocketUriHandler{
 
 	private function _getData()
 	{
-		$data = file_get_contents('backup.log') . file_get_contents('points.log');
-		$output = '{"meta":{"connected":"' . count($this->users)
-			. '"},"array":[' . str_replace(PHP_EOL, ',', trim($data)) . ']}';
+		$output = json_encode(array(
+			'meta' => array('connected' => count($this->users)),
+			'array' => $this->_getDb()->getAll()
+		));
 
 		return $output;
 	}
 
 	private function _saveData($data)
 	{
-		file_put_contents('points.log', $data.PHP_EOL, FILE_APPEND);
+		$this->_getDb()->insert(
+			$data['x1'],
+			$data['y1'],
+			$data['x2'],
+			$data['y2'],
+			$data['width'],
+			$data['color']
+		);
+	}
+
+	protected function _getDb()
+	{
+		if (! $this->_db) {
+			$this->_db = new DB();
+		}
+		return $this->_db;
 	}
 }

@@ -1,31 +1,21 @@
 <?php
+include 'DB.php';
+
 class Wraith
 {
+    protected $_db;
     // Has to be quadtree
     protected $_buffer = array();
-    protected $_lines = array();
     protected $_culled = 0;
+    protected $_notCulled = 0;
 
-    protected function _open($file, $outputFile)
-    {
-        $contents = file_get_contents($file);
-        // Clear output file
-        rename($outputFile, 'backup.log');
-        file_put_contents($outputFile, '');
-
-        // Continue processing
-        $lines = explode(PHP_EOL, trim($contents));
-        $this->_lines = array_reverse($lines);
-    }
-
-    public function cull($file, $outputFile)
+    public function cull()
     {
         $start = microtime(true);
-        $this->_open($file, $outputFile);
 
         // loop through file
-        foreach ($this->_lines as $key => $rawLine) {
-            $line = json_decode($rawLine, true);
+        $result = $this->_getDb()->getResult();
+        while ($line = $result->fetch_assoc()) {
             $shape = $this->_shape(
                 $line['x1'],
                 $line['y1'],
@@ -34,26 +24,14 @@ class Wraith
                 $line['width']
             );
             if ($shape) {
-                $this->_output[] = $rawLine;
+                $this->_notCulled++;
             } else {
                 $this->_culled++;
             }
         }
+        $result->close();
         $end = microtime(true) - $start;
-        echo 'Culled '. $this->_culled . ' / '.count($this->_lines).' lines in '. number_format($end) . ' s'.PHP_EOL;
-        $a = array_reverse($this->_output);
-        file_put_contents('temp.log', '');
-        foreach ($a as $line) {
-            file_put_contents('temp.log', $line.PHP_EOL, FILE_APPEND);
-        }
-        echo 'Written Temp File'.PHP_EOL;
-        $startSwitch = microtime(true);
-        $newLines = @file_get_contents($outputFile);
-        file_put_contents('temp.log', $newLines, FILE_APPEND);
-        rename('temp.log', $outputFile);
-        file_put_contents('backup.log', '');
-        $switch = microtime(true) - $startSwitch;
-        echo 'Completed bait and switch ('.strlen($newLines).'b) in '.number_format($switch).' s'.PHP_EOL;
+        echo 'Culled '. $this->_culled . ' / '.$this->_notCulled.' lines in '. number_format($end) . ' s'.PHP_EOL;
     }
 
     protected function _drawRect($x1, $y1, $x2, $y2, $w, $output)
@@ -134,11 +112,15 @@ class Wraith
 
         return array($distanceLine, $outside);
     }
-}
 
-if (empty($argv[1]) && empty($argv[2])) {
-    echo 'Must specify two files'.PHP_EOL;
+    protected function _getDb()
+    {
+        if (! $this->_db) {
+            $this->_db = new DB();
+        }
+        return $this->_db;
+    }
 }
 
 $wraith = new Wraith();
-$wraith->cull($argv[1], $argv[2]);
+$wraith->cull();
