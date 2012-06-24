@@ -42,8 +42,11 @@ class DB {
     public function getAll()
     {
         $db = $this->_getDb();
-        $result = $db->query("SELECT * FROM points ORDER BY id ASC");
-        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        $result = $db->query("SELECT * FROM points ORDER BY id ASC LIMIT 20000");
+        $rows = array();
+        while($row = $result->fetch_array(MYSQLI_ASSOC)) {
+            $rows[] = $row;
+        }
         $result->close();
 
         return $rows;
