@@ -1,5 +1,5 @@
 <?php
-include 'DB.php';
+include 'db.php';
 $points = file_get_contents('points.log');
 
 $list = explode(PHP_EOL, $points);

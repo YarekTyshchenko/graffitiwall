@@ -1,5 +1,5 @@
 <?php
-include 'DB.php';
+include 'db.php';
 
 class Handler extends WebSocketUriHandler{
 	protected $_db;

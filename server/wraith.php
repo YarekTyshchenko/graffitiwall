@@ -1,5 +1,5 @@
 <?php
-include 'DB.php';
+include 'db.php';
 
 class Wraith
 {
