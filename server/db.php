@@ -26,6 +26,11 @@ class DB {
         return $this->_preparedInsert;
     }
 
+    public function delete($id)
+    {
+        $this->_getDb()->query("DELETE FROM points WHERE id = $id");
+    }
+
     public function insert($x1, $y1, $x2, $y2, $width, $color)
     {
         $query = $this->_getPreparedInsert();
@@ -47,7 +52,7 @@ class DB {
     public function getResult()
     {
         $db = $this->_getDb();
-        $result = $db->query("SELECT x1, y1, x2, y2, width FROM points ORDER BY id DESC");
+        $result = $db->query("SELECT id, x1, y1, x2, y2, width FROM points ORDER BY id DESC");
         return $result;
     }
 }

@@ -11,10 +11,11 @@ class Wraith
 
     public function cull()
     {
+        $db = new DB();
         $start = microtime(true);
 
         // loop through file
-        $result = $this->_getDb()->getResult();
+        $result = $db->getResult();
         while ($line = $result->fetch_assoc()) {
             $shape = $this->_shape(
                 $line['x1'],
@@ -26,6 +27,8 @@ class Wraith
             if ($shape) {
                 $this->_notCulled++;
             } else {
+                $db->delete($line['id']);
+                echo '.';
                 $this->_culled++;
             }
         }
@@ -111,14 +114,6 @@ class Wraith
         }    
 
         return array($distanceLine, $outside);
-    }
-
-    protected function _getDb()
-    {
-        if (! $this->_db) {
-            $this->_db = new DB();
-        }
-        return $this->_db;
     }
 }
 
