@@ -17,19 +17,19 @@ class Wraith
         // loop through file
         $result = $db->getResult();
         while ($line = $result->fetch_assoc()) {
-            $shape = $this->_shape(
+            $covered = $this->_isCovered(
                 $line['x1'],
                 $line['y1'],
                 $line['x2'],
                 $line['y2'],
                 $line['width']
             );
-            if ($shape) {
-                $this->_notCulled++;
-            } else {
+            if ($covered) {
                 $db->delete($line['id']);
                 echo '.';
                 $this->_culled++;
+            } else {
+                $this->_notCulled++;
             }
         }
         $result->close();
@@ -37,23 +37,9 @@ class Wraith
         echo 'Culled '. $this->_culled . ' / '.$this->_notCulled.' lines in '. number_format($end) . ' s'.PHP_EOL;
     }
 
-    protected function _drawRect($x1, $y1, $x2, $y2, $w, $output)
+    protected function _isCovered($x1, $y1, $x2, $y2, $w)
     {
-        if ($x1 == $x2 && $y1 == $y2) {
-            return;
-        }
-        for ($x = 0; $x <= (max($x1, $x2) + $w) - (min($x1, $x2) - $w); $x++) {
-            for ($y = 0; $y <= (max($y1, $y2) + $w) - (min($y1, $y2) - $w); $y++) {
-                list($d, $outside) = $this->_p($x1, $y1, $x2, $y2, $x1+$x, $y1+$y);
-                if (floor($d) < $w && !$outside) {
-                    $output[$x1+$x][$y1+$y] = true;
-                }
-            }
-        }
-    }
-
-    protected function _shape($x1, $y1, $x2, $y2, $w)
-    {
+        $return = true;
         //     ---.----------.----------.
         //   /    |   \      .          |
         //  |     |    |     .          |
@@ -69,29 +55,24 @@ class Wraith
                 // check for circle intersection
                 $l = sqrt(pow($x, 2) + pow($y, 2));
                 if (floor($l) <= $w) {
-                    $mask[$x1 + $x][$y1 + $y] = true;
+                    if (! isset($this->_buffer[$x1 + $x][$y1 + $y])) {
+                        $return = false;
+                        $this->_buffer[$x1 + $x][$y1 + $y] = true;
+                    }
                 }
             }
         }
         // draw a rectangle between 1 and 2
-        $this->_drawRect($x1, $y1, $x2, $y2, $w, &$mask);
-
-
-        $inside = $this->_intersect($mask);
-        if (! $inside) {
-            return true;
-        }
-        return false;
-    }
-
-    protected function _intersect($shape)
-    {
-        $return = true;
-        foreach ($shape as $x => $yarray) {
-            foreach ($yarray as $y => $set) {
-                if (! isset($this->_buffer[$x][$y])) {
-                    $return = false;
-                    $this->_buffer[$x][$y] = true;
+        if ($x1 != $x2 || $y1 != $y2) {
+            for ($x = 0; $x <= (max($x1, $x2) + $w) - (min($x1, $x2) - $w); $x++) {
+                for ($y = 0; $y <= (max($y1, $y2) + $w) - (min($y1, $y2) - $w); $y++) {
+                    list($d, $outside) = $this->_p($x1, $y1, $x2, $y2, $x1+$x, $y1+$y);
+                    if (floor($d) < $w && !$outside) {
+                        if (! isset($this->_buffer[$x1 + $x][$y1 + $y])) {
+                            $return = false;
+                            $this->_buffer[$x1 + $x][$y1 + $y] = true;
+                        }
+                    }
                 }
             }
         }
