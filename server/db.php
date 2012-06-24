@@ -39,10 +39,14 @@ class DB {
         return $query->error;
     }
 
-    public function getAll()
+    public function getAll($page)
     {
+        $pageSQL = '';
+        if (! is_null($page)) {
+            $pageSQL = " LIMIT ".(int)$page.", 1000";
+        }
         $db = $this->_getDb();
-        $result = $db->query("SELECT x1, y1, x2, y2, width, color FROM points ORDER BY id ASC");
+        $result = $db->query("SELECT x1, y1, x2, y2, width, color FROM points ORDER BY id ASC".$pageSQL);
         $rows = array();
         while($row = $result->fetch_array(MYSQLI_ASSOC)) {
             $rows[] = $row;

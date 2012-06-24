@@ -15,7 +15,7 @@ class Handler extends WebSocketUriHandler{
 					$messages[] = $data['data'];
 					break;
 				case 'c':
-					$currentUser->sendString($this->_getData());
+					$currentUser->sendString($this->_getData($data['meta']['page']));
 					break;
 			}
 		}
@@ -47,11 +47,11 @@ class Handler extends WebSocketUriHandler{
 		}
 	}
 
-	private function _getData()
+	private function _getData($page)
 	{
 		$output = json_encode(array(
-			'meta' => array('connected' => count($this->users)),
-			'array' => $this->_getDb()->getAll()
+			'meta' => array('connected' => count($this->users), 'animation' => true),
+			'array' => $this->_getDb()->getAll($page)
 		));
 
 		return $output;

@@ -7,13 +7,14 @@ function createSocket(host){
         return new MozWebSocket(host);
 }
 
+var page = 0;
 function init(){
     var host = "ws://" + window.location.host + ":12345/wall";
     socket = createSocket(host);
 
     socket.onopen = function(msg) {
         connected = true;
-        send({}, 'c');
+        send({}, {type:'c', page:page});
         $('#connected').text('Loading...');
 
     };
@@ -23,9 +24,19 @@ function init(){
     };
     socket.onmessage = function(msg) {
         var message = $.parseJSON(msg.data);
-        $.each(message.array, function(key, data){
-            draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
-        });
+        if (message.meta.animation) {
+            page = page + 1000;
+            list.push.apply(list, message.array);
+            moreRequested = false;
+            if (message.array.length) {
+                animate();
+            }
+            
+        } else {
+            $.each(message.array, function(key, data){
+                draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
+            });
+        }
         if (message.meta.connected) {
            $('#connected').text(message.meta.connected);
         }
@@ -33,13 +44,28 @@ function init(){
     };
 }
 
-function send(message, type){
+var list = [];
+var moreRequested = false;
+function animate(total) {
+    $('#connected').text(list.length);
+    if (list.length < 500 && ! moreRequested) {
+        moreRequested = true;
+        send({}, {type:'c', page: page});
+    }
+    var data = list.shift();
+    if (data) {
+        draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
+        //setTimeout(animate, 1);
+        animate();
+    }
+}
+
+function send(message, meta){
     var data = {
-        meta: {
-            type: type
-        },
+        meta: meta,
         data: message
     }
+    console.log(data);
     if (connected) {
         socket.send(JSON.stringify(data));
     }
@@ -60,7 +86,7 @@ function point(x1, y1, x2, y2) {
         color: sessionColor
     };
     
-    send(data, 'd');
+    send(data, {type:'d'});
 }
 
 function draw(x1, y1, x2, y2, width, color) {
