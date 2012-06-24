@@ -65,7 +65,6 @@ function send(message, meta){
         meta: meta,
         data: message
     }
-    console.log(data);
     if (connected) {
         socket.send(JSON.stringify(data));
     }
