@@ -22,7 +22,6 @@ class Handler extends WebSocketUriHandler{
 					break;
 			}
 		}
-		$this->say('Type : '.$data['meta']['type']);
 		if (! count($messages)) {
 			return;
 		}

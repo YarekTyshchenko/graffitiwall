@@ -130,6 +130,7 @@ function draw(x1, y1, x2, y2, width, color) {
 var sessionWidth;
 var sessionColor;
 var colorlist = [];
+var enabled = true;
 function selectColor(index) {
     sessionColor = colorlist[index];
 
@@ -205,16 +206,18 @@ $(function(){
 
     var click = false;
     $('#canvas').mousedown(function(e){
-        click = true;
-        p = getPosition(e);
-        point(p.x, p.y, p.x, p.y);
+        if (enabled) {
+            click = true;
+            p = getPosition(e);
+            point(p.x, p.y, p.x, p.y);
+        }
     });
     $(window).mouseup(function(e){
         click = false;
     });
 
     $('#canvas').mousemove(function(e){
-        if (click) {
+        if (click && enabled) {
             var np = getPosition(e);
             point(np.x, np.y, p.x, p.y);
             p = np;
@@ -227,6 +230,7 @@ $(function(){
         $(this).parent().addClass('active');
         $('#wall').removeClass('active');
         
+        enabled = false;
         page = 0;
         run = 'timelapse';
         list = [];
@@ -247,6 +251,7 @@ $(function(){
         list = [];
         clearCanvas();
         loadData();
+        enabled = true;
     })
 });
 
