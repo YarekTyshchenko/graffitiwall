@@ -17,10 +17,21 @@ class Handler extends WebSocketUriHandler{
 				case 'c':
 					$currentUser->sendString($this->_getData($data['meta']['page']));
 					break;
+				case 't':
+					$currentUser->sendString($this->_timelapse($data['meta']['page']));
+					break;
 			}
 		}
+		$this->say('Type : '.$data['meta']['type']);
+		if (! count($messages)) {
+			return;
+		}
+
 		$packed = json_encode(array(
-			'meta' => array('connected' => count($this->users)),
+			'meta' => array(
+				'connected' => count($this->users),
+				'update' => true
+			),
 			'array' => $messages
 		));
 		
@@ -37,7 +48,10 @@ class Handler extends WebSocketUriHandler{
 	public function onDisconnect(IWebSocketConnection $currentUser)
 	{
 		$packed = json_encode(array(
-			'meta' => array('connected' => count($this->users)),
+			'meta' => array(
+				'connected' => count($this->users),
+				'disconnect' => true
+			),
 			'array' => array()
 		));
 		foreach($this->users as $user){
@@ -50,8 +64,24 @@ class Handler extends WebSocketUriHandler{
 	private function _getData($page)
 	{
 		$output = json_encode(array(
-			'meta' => array('connected' => count($this->users), 'animation' => true),
+			'meta' => array(
+				'connected' => count($this->users),
+				'progressive' => true
+			),
 			'array' => $this->_getDb()->getAll($page)
+		));
+
+		return $output;
+	}
+
+	private function _timelapse($page)
+	{
+		$output = json_encode(array(
+			'meta' => array(
+				'connected' => count($this->users),
+				'timelapse' => true
+			),
+			'array' => $this->_getDb()->timelapse($page, 1000)
 		));
 
 		return $output;

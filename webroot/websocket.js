@@ -24,37 +24,61 @@ function init(){
     };
     socket.onmessage = function(msg) {
         var message = $.parseJSON(msg.data);
-        if (message.meta.animation) {
-            page = page + 1000;
-            moreRequested = false;
-            if (message.array.length) {
-                list.push.apply(list, message.array);
-                animate();
-            }
-            
-        } else {
-            $.each(message.array, function(key, data){
-                draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
-            });
-        }
         if (message.meta.connected) {
            $('#connected').text(message.meta.connected);
         }
 
+        // Quit if no data sent
+        if (! message.array.length) {
+            console.log('Empty message');
+            return;
+        }
+
+        // If its a fast update
+        if (message.meta.update) {
+            $.each(message.array, function(key, data){
+                draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
+            });
+        } else {
+            page = page + 1000;
+            moreRequested = false;
+            list.push.apply(list, message.array);
+            // If its a standard load
+            if (message.meta.progressive) {
+                run = 'loadData';
+                loadData();
+            // or a timelapse load
+            } else if (message.meta.timelapse) {
+                run = 'timelapse';
+                timelapse();
+            }
+        }
     };
 }
 
 var list = [];
-var moreRequested = false;
-function animate(total) {
-    var data = list.shift();
-    if (data) {
-        draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
-        //setTimeout(animate, 1);
-        animate();
-    } else if (! moreRequested) {
-        moreRequested = true;
-        send({}, {type:'c', page: page});
+var run = '';
+function loadData() {
+    if (run == 'loadData') {
+        var data = list.shift();
+        if (data) {
+            draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
+                loadData();
+        } else {
+            send({}, {type:'c', page: page});
+        }
+    }
+}
+
+function timelapse() {
+    if (run == 'timelapse') {
+        var data = list.shift();
+        if (data) {
+            draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
+                setTimeout(timelapse, 1);
+        } else {
+            send({}, {type:'t', page: page});
+        }
     }
 }
 
@@ -125,6 +149,10 @@ var resizeCanvas = function() {
     });
 }
 
+function clearCanvas() {
+    ctx.clearRect(0,0,$('#canvas').width() ,$('#canvas').height());
+}
+
 function getPosition(e) {
     var targ;
     if (!e)
@@ -192,5 +220,33 @@ $(function(){
             p = np;
         }
     });
+
+    // Attach timelapse and wall functions
+    $('#timelapse').on('click', 'a', function(e){
+        e.preventDefault();
+        $(this).parent().addClass('active');
+        $('#wall').removeClass('active');
+        
+        page = 0;
+        run = 'timelapse';
+        list = [];
+        clearCanvas();
+        timelapse();
+    });
+
+    $('#wall').on('click', 'a', function(e){
+        e.preventDefault();
+        if ($(this).parent().is('.active')) {
+            return;
+        }
+        $(this).parent().addClass('active');
+        $('#timelapse').removeClass('active');
+        
+        page = 0;
+        run = 'loadData';
+        list = [];
+        clearCanvas();
+        loadData();
+    })
 });
 

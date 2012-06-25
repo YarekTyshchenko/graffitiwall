@@ -9,6 +9,7 @@ class DB {
     {
         if (! $this->_db) {
             $mysqli = new mysqli("localhost", "graffitiwall", "", "graffitiwall_websocket");
+            //$mysqli = new mysqli("hermes.yarekt.co.uk", "wraith", "K9YYCnYcDAqbZZnK", "graffitiwall_websocket");
             $this->_db = $mysqli;
         }
         return $this->_db;
@@ -52,6 +53,19 @@ class DB {
         }
         $db = $this->_getDb();
         $result = $db->query("SELECT x1, y1, x2, y2, width, color FROM points ORDER BY id ASC".$pageSQL);
+        $rows = array();
+        while($row = $result->fetch_array(MYSQLI_ASSOC)) {
+            $rows[] = $row;
+        }
+        $result->close();
+
+        return $rows;
+    }
+
+    public function timelapse($page, $limit)
+    {
+        $db = $this->_getDb();
+        $result = $db->query("SELECT x1, y1, x2, y2, width, color FROM timelapse ORDER BY id ASC LIMIT $page, $limit");
         $rows = array();
         while($row = $result->fetch_array(MYSQLI_ASSOC)) {
             $rows[] = $row;
