@@ -60,6 +60,22 @@ class Handler extends WebSocketUriHandler{
 		}
 	}
 
+	public function onConnect(IWebSocketConnection $currentUser)
+	{
+		$packed = json_encode(array(
+			'meta' => array(
+				'connected' => count($this->users),
+				'update' => true
+			),
+			'array' => array()
+		));
+		foreach($this->users as $user){
+			if ($user->getId() !== $currentUser->getId()){
+				$user->sendString($packed);
+			}
+		}
+	}
+
 	private function _getData($page)
 	{
 		$output = json_encode(array(
