@@ -15,8 +15,6 @@ function init(){
     socket.onopen = function(msg) {
         connected = true;
         send({}, {type:'c', page:page});
-        $('#connected').text('Loading...');
-
     };
     socket.onclose = function(msg) {
         connected = false;
@@ -30,7 +28,6 @@ function init(){
 
         // Quit if no data sent
         if (! message.array.length) {
-            console.log('Empty message');
             return;
         }
 
