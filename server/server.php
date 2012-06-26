@@ -1,4 +1,4 @@
-#!/php -q
+#!/usr/bin/php -q
 <?php
 date_default_timezone_set('Europe/London');
 require_once("phpws/websocket.server.php");
