@@ -1,27 +1,16 @@
-var socket = (function(options){
-    var socket;
-    var messageCallback = function(message) {
-        console.log(message);
-    };
-    var _f = {
-        send: function(message) {
-            socket.send(message);
-        },
-        setMessageCallback: function(callback) {
-            if (socket) {
-                socket.on('message', callback)
-            }
-            messageCallback = callback;
-        },
-        connect: function(host, port) {
-            socket = io.connect('http://' + host + ':' + port);
-            socket.on('connect', function(){
-                socket.on('message', messageCallback);
-            });
-        };
-        _f.connect('localhost', '12346');
-        return _f;
-    };
-})();
+var Socket = (function(host, port){
+    var socket = io.connect('http://' + host + ':' + port);
+    socket.on('connect', function(){});
 
-socket.send('hi2');
+    return {
+        send: function(message) {
+            socket.emit('message', message);
+        },
+        draw: function(data) {
+            socket.emit('draw', data);
+        },
+        addCallback: function(name, callback) {
+            socket.on(name, callback);
+        }
+    };
+});

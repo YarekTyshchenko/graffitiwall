@@ -1,55 +1,40 @@
-var socket;
+var newSocket = Socket(window.location.host, 12346);
+newSocket.addCallback('draw', function(message) {
+    if (message.meta.connected) {
+       $('#connected').text(message.meta.connected);
+    }
 
-function createSocket(host){
-    if(window.WebSocket)
-        return new WebSocket(host);
-    else if(window.MozWebSocket)
-        return new MozWebSocket(host);
-}
+    // Quit if no data sent
+    if (! message.array.length) {
+        return;
+    }
+
+    // If its a fast update
+    if (message.meta.update) {
+        $.each(message.array, function(key, data){
+            draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
+        });
+    } else {
+        page = page + 1000;
+        moreRequested = false;
+        list.push.apply(list, message.array);
+        // If its a standard load
+        if (message.meta.progressive) {
+            run = 'loadData';
+            loadData();
+        // or a timelapse load
+        } else if (message.meta.timelapse) {
+            run = 'timelapse';
+            timelapse();
+        }
+    }
+});
 
 var page = 0;
 function init(){
-    var host = "ws://" + window.location.host + ":12345/wall";
-    socket = createSocket(host);
-
     socket.onopen = function(msg) {
         connected = true;
         send({}, {type:'c', page:page});
-    };
-    socket.onclose = function(msg) {
-        connected = false;
-        setTimeout(init, 1000);
-    };
-    socket.onmessage = function(msg) {
-        var message = $.parseJSON(msg.data);
-        if (message.meta.connected) {
-           $('#connected').text(message.meta.connected);
-        }
-
-        // Quit if no data sent
-        if (! message.array.length) {
-            return;
-        }
-
-        // If its a fast update
-        if (message.meta.update) {
-            $.each(message.array, function(key, data){
-                draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
-            });
-        } else {
-            page = page + 1000;
-            moreRequested = false;
-            list.push.apply(list, message.array);
-            // If its a standard load
-            if (message.meta.progressive) {
-                run = 'loadData';
-                loadData();
-            // or a timelapse load
-            } else if (message.meta.timelapse) {
-                run = 'timelapse';
-                timelapse();
-            }
-        }
     };
 }
 
@@ -84,9 +69,7 @@ function send(message, meta){
         meta: meta,
         data: message
     }
-    if (connected) {
-        socket.send(JSON.stringify(data));
-    }
+    newSocket.draw(data);
 }
 
 var ctx;
