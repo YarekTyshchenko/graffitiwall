@@ -9,6 +9,9 @@ var Socket = (function(host, port){
         draw: function(data) {
             socket.emit('draw', data);
         },
+        emit: function(type, data) {
+            socket.emit(type, data);
+        },
         addCallback: function(name, callback) {
             socket.on(name, callback);
         }

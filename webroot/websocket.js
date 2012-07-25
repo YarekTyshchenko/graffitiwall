@@ -1,42 +1,29 @@
 var newSocket = Socket(window.location.host, 12346);
-newSocket.addCallback('draw', function(message) {
-    if (message.meta.connected) {
-       $('#connected').text(message.meta.connected);
-    }
-
-    // Quit if no data sent
-    if (! message.array.length) {
-        return;
-    }
-
-    // If its a fast update
-    if (message.meta.update) {
-        $.each(message.array, function(key, data){
-            draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
-        });
-    } else {
-        page = page + 1000;
-        moreRequested = false;
-        list.push.apply(list, message.array);
-        // If its a standard load
-        if (message.meta.progressive) {
-            run = 'loadData';
-            loadData();
-        // or a timelapse load
-        } else if (message.meta.timelapse) {
-            run = 'timelapse';
-            timelapse();
-        }
-    }
+newSocket.addCallback('draw', function(data) {
+    draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
+});
+newSocket.addCallback('count', function(count) {
+    $('#connected').text(count);
+});
+newSocket.addCallback('replay', function(events) {
+    page = page + 1000;
+    moreRequested = false;
+    list.push.apply(list, events);
+    run = 'loadData';
+    loadData();
 });
 
+newSocket.addCallback('timelapse', function(events) {
+    page = page + 1000;
+    moreRequested = false;
+    list.push.apply(list, events);
+    run = 'timelapse';
+    timelapse();
+});
+
+newSocket.emit('replay', 0);
+
 var page = 0;
-function init(){
-    socket.onopen = function(msg) {
-        connected = true;
-        send({}, {type:'c', page:page});
-    };
-}
 
 var list = [];
 var run = '';
@@ -47,7 +34,7 @@ function loadData() {
             draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
                 loadData();
         } else {
-            send({}, {type:'c', page: page});
+            //send({}, {type:'c', page: page});
         }
     }
 }
@@ -59,7 +46,7 @@ function timelapse() {
             draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
                 setTimeout(timelapse, 1);
         } else {
-            send({}, {type:'t', page: page});
+            //send({}, {type:'t', page: page});
         }
     }
 }
@@ -181,8 +168,6 @@ $(function(){
     });
 
     ctx = $('#canvas')[0].getContext('2d');
-    // Lets hook it all up
-    init();
 
     var click = false;
     $('#canvas').mousedown(function(e){

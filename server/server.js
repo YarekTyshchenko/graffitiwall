@@ -1,5 +1,5 @@
 var io = require('socket.io').listen(12346);
-
+var list = [];
 io.sockets.on('connection', function (socket) {
 
     io.sockets.emit('count', count());
@@ -14,17 +14,19 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('draw', function(data) {
-        updatedData = {
-            meta: {
-                connected: count(),
-                update: true
-            },
-            array: [data.data]
-        };
-
-        socket.broadcast.emit('draw', updatedData);
+        socket.broadcast.emit('draw', data.data);
 
         // Save later on
+        list.push(data.data);
+    });
+
+    socket.on('replay', function(page) {
+        // send replay array
+        socket.emit('replay', list);
+    });
+    socket.on('timelapse', function(page) {
+        // Send timelapse array
+        socket.emit('timelapse', list);
     });
 });
 
