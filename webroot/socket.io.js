@@ -14,6 +14,12 @@ var Socket = (function(host, port){
         },
         addCallback: function(name, callback) {
             socket.on(name, callback);
+        },
+        replay: function() {
+            socket.emit('replay');
+        },
+        timelapse: function() {
+            socket.emit('timelapse');
         }
     };
 });

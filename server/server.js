@@ -1,5 +1,8 @@
 var io = require('socket.io').listen(12346);
-var list = [];
+io.set('log level', 2);
+
+var db = require('./db');
+
 io.sockets.on('connection', function (socket) {
 
     io.sockets.emit('count', count());
@@ -7,27 +10,40 @@ io.sockets.on('connection', function (socket) {
         io.sockets.emit('count', count()-1);
     });
 
-
-    // Actual events
+    // Chat
     socket.on('message', function (a) {
         socket.broadcast.emit('message', a);
     });
 
+    // Actual events
     socket.on('draw', function(data) {
-        socket.broadcast.emit('draw', data.data);
+        socket.broadcast.emit('draw', data);
 
         // Save later on
-        list.push(data.data);
+        db.insert(data);
     });
 
-    socket.on('replay', function(page) {
+    socket.on('replay', function() {
         // send replay array
-        socket.emit('replay', list);
+        // Loop through the list and emit the data incrementally
+        var list = db.replay();
+        for (var i = 0, length = list.length; i < length; i++) {
+            socket.emit('draw', list[i]);
+        }
     });
-    socket.on('timelapse', function(page) {
+
+    /*
+    socket.on('timelapse', function() {
         // Send timelapse array
-        socket.emit('timelapse', list);
+        //socket.emit('timelapse', list);
+        // Loop through different table's data and send
+        // incrementally anyway, as 'draw'
+        for (var i = 0, length = list.length; i < length; i++) {
+            socket.emit('draw', list[i]);
+        }
+
     });
+     */
 });
 
 function count() {

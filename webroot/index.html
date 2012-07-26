@@ -14,6 +14,7 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="http://localhost:12346/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="socket.io.js"></script>
+    <script type="text/javascript" src="wall.js"></script>
     <script type="text/javascript" src="websocket.js"></script>
     <script type="text/javascript">
         var _gaq = _gaq || [];
@@ -41,9 +42,9 @@
                         <!--li id='about'>
                             <a href='#'>About</a>
                         </li-->
-                        <li id='timelapse'>
+                        <!--li id='timelapse'>
                             <a href='#'>Timelapse</a>
-                        </li>
+                        </li-->
                         <li class='divider-vertical'></li>
                     </ul>
                     
@@ -90,7 +91,7 @@
             <p>Created with the help of WebSockets and canvas html5 element. Timelapse loops through some of the history of whats been drawn</p>
             <p>I built this for fun and as a scalability challange. If you like it drop me a tweet, i am <a href='http://twitter.com/#!/yarekt'>@yarekt</a></p>
         </div-->
-        <canvas id="canvas" keepalive="true">
+        <canvas id="canvas">
             You do not have html5 canvas support
         </canvas>
     </div>

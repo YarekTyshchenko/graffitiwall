@@ -1,37 +1,11 @@
-var newSocket = Socket(window.location.host, 12346);
-newSocket.addCallback('draw', function(data) {
-    draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
-});
-newSocket.addCallback('count', function(count) {
-    $('#connected').text(count);
-});
-newSocket.addCallback('replay', function(events) {
-    page = page + 1000;
-    moreRequested = false;
-    list.push.apply(list, events);
-    run = 'loadData';
-    loadData();
-});
-
-newSocket.addCallback('timelapse', function(events) {
-    page = page + 1000;
-    moreRequested = false;
-    list.push.apply(list, events);
-    run = 'timelapse';
-    timelapse();
-});
-
-newSocket.emit('replay', 0);
-
-var page = 0;
-
+/*
 var list = [];
 var run = '';
 function loadData() {
     if (run == 'loadData') {
         var data = list.shift();
         if (data) {
-            draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
+            wall.draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
                 loadData();
         } else {
             //send({}, {type:'c', page: page});
@@ -43,180 +17,107 @@ function timelapse() {
     if (run == 'timelapse') {
         var data = list.shift();
         if (data) {
-            draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
+            wall.draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
                 setTimeout(timelapse, 1);
         } else {
             //send({}, {type:'t', page: page});
         }
     }
 }
+ */
 
-function send(message, meta){
-    var data = {
-        meta: meta,
-        data: message
-    }
-    newSocket.draw(data);
-}
-
-var ctx;
-
-function point(x1, y1, x2, y2) {
-    
-    draw(x1, y1, x2, y2, sessionWidth, sessionColor);
-
-    var data = {
-        x1: x1,
-        y1: y1,
-        x2: x2,
-        y2: y2,
-        width: sessionWidth,
-        color: sessionColor
-    };
-    
-    send(data, {type:'d'});
-}
-
-function draw(x1, y1, x2, y2, width, color) {
-    ctx.fillStyle = color;
-    ctx.strokeStyle = color;
-    ctx.lineWidth = width*2;
-
-    ctx.beginPath();
-    ctx.moveTo(x2, y2);
-    ctx.lineTo(x1, y1);
-    ctx.stroke();
-    ctx.closePath();
-
-    ctx.beginPath();
-    ctx.arc(x1, y1, width, 0, Math.PI*2, true);
-    ctx.closePath();
-    ctx.fill();
-}
-
-var sessionWidth;
-var sessionColor;
+var wall;
 var colorlist = [];
-var enabled = true;
-function selectColor(index) {
-    sessionColor = colorlist[index];
-
-    var selector = $('#colour-selector a div');
-    selector.removeClass('active');
-    selector.filter(function(i){
-        if (i == index) {
-            $(this).addClass('active');
-        }
-    });
-}
-
-var resizeCanvas = function() {
-    $('#canvas').attr({
-        width: $('#main_content').width(),
-        height: $('#main_content').height()
-    });
-}
-
-function clearCanvas() {
-    ctx.clearRect(0,0,$('#canvas').width() ,$('#canvas').height());
-}
-
-function getPosition(e) {
-    var targ;
-    if (!e)
-        e = window.event;
-    if (e.target)
-        targ = e.target;
-    else if (e.srcElement)
-        targ = e.srcElement;
-    if (targ.nodeType == 3) // defeat Safari bug
-        targ = targ.parentNode;
-
-    var x = e.pageX - $(targ).offset().left;
-    var y = e.pageY - $(targ).offset().top;
-
-    return {"x": x, "y": y};
-};
-
-var p;
 $(function(){
-    resizeCanvas();
-    $(window).resize(resizeCanvas);
-    sessionWidth = $('#brush-selector li.active a').data('size');
-    $('#brush-selector').on('click', 'a', function(e){
-        e.preventDefault();
+    // Create graffiti wall instance
+    wall = Wall($('#canvas'));
 
-        $('#brush-selector li').removeClass('active');
-        $(this).parent().addClass('active');
-        
-        sessionWidth = $(this).data('size');
-    });
+    // Make it resize to element size
+    wall.resizeToElement($('#main_content'));
 
     // Populate colours
     $('#colour-selector a div').each(function(){
         colorlist.push($(this).css('background-color'));
     });
+
+    var selectColor = function(index) {
+        var selector = $('#colour-selector a div');
+        selector.removeClass('active');
+        selector.filter(function(i){
+            if (i == index) {
+                $(this).addClass('active');
+            }
+        });
+
+        return colorlist[index];
+    }
     // Select random color
-    selectColor(Math.floor(Math.random() * colorlist.length));
+    wall.setColor(selectColor(Math.floor(Math.random() * colorlist.length)));
 
-
-    // Attach color event handlers
+    // On click set color
     $('#colour-selector').on('click', 'a', function(e){
         e.preventDefault();
 
-        selectColor($(this).parent().index());
+        wall.setColor(selectColor($(this).parent().index()));
     });
 
-    ctx = $('#canvas')[0].getContext('2d');
+    // On click set width
+    wall.setWidth($('#brush-selector li.active a').data('size'));
+    $('#brush-selector').on('click', 'a', function(e){
+        e.preventDefault();
 
-    var click = false;
-    $('#canvas').mousedown(function(e){
-        if (enabled) {
-            click = true;
-            p = getPosition(e);
-            point(p.x, p.y, p.x, p.y);
-        }
-    });
-    $(window).mouseup(function(e){
-        click = false;
+        $('#brush-selector li').removeClass('active');
+        $(this).parent().addClass('active');
+
+        wall.setWidth($(this).data('size'));
     });
 
-    $('#canvas').mousemove(function(e){
-        if (click && enabled) {
-            var np = getPosition(e);
-            point(np.x, np.y, p.x, p.y);
-            p = np;
-        }
+    // Configure socket
+    var socket = Socket(window.location.host, 12346);
+    socket.addCallback('count', function(count) {
+        $('#connected').text(count);
     });
 
+    // Set up socket draw callback
+    socket.addCallback('draw', function(data) {
+        wall.draw(data);
+    });
+
+    // Load initial data
+    socket.replay();
+
+    // Set up sending draw data to server callback
+    wall.setDrawCallback(function(data) {
+        // Send data to socket
+        socket.draw(data);
+    });
+
+    /*
     // Attach timelapse and wall functions
     $('#timelapse').on('click', 'a', function(e){
         e.preventDefault();
         $(this).parent().addClass('active');
         $('#wall').removeClass('active');
-        
-        enabled = false;
-        page = 0;
-        run = 'timelapse';
-        list = [];
-        clearCanvas();
-        timelapse();
+
+        wall.disable();
+        wall.clear();
+        socket.timelapse();
     });
 
     $('#wall').on('click', 'a', function(e){
         e.preventDefault();
+
+        // Prevent reloading
         if ($(this).parent().is('.active')) {
             return;
         }
         $(this).parent().addClass('active');
         $('#timelapse').removeClass('active');
-        
-        page = 0;
-        run = 'loadData';
-        list = [];
-        clearCanvas();
-        loadData();
-        enabled = true;
+
+        wall.clear();
+        socket.replay();
+        wall.enable();
     })
+    */
 });
 
