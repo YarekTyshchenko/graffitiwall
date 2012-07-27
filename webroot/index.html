@@ -35,10 +35,10 @@
                 <span class='brand'>Graffiti Wall</span>
                 <div class='nav-collapse'>
                     <ul class='nav'>
-                        <li class='divider-vertical'></li>
-                        <li id='wall' class='active'>
+                        <!--li class='divider-vertical'></li-->
+                        <!--li id='wall' class='active'>
                             <a href='#'>Wall</a>
-                        </li>
+                        </li-->
                         <!--li id='about'>
                             <a href='#'>About</a>
                         </li-->
@@ -47,53 +47,62 @@
                         </li-->
                         <li class='divider-vertical'></li>
                     </ul>
-                    
+
                     <span class='navbar-text'>Users:</span>
                     <span id='connected' class='navbar-text'>0</span>
-                    
+
                     <span id='debug' class='navbar-text'></span>
-                    
-                    <ul id='colour-selector' class='nav pull-right'>
-                        <li><a href='#'><div style='background-color: #F1F1F2'></div></a></li>
-                        <li><a href='#'><div style='background-color: #929497'></div></a></li>
-                        <li><a href='#'><div style='background-color: #404041'></div></a></li>
-                        <li><a href='#'><div style='background-color: #FBDEEF'></div></a></li>
-                        <li><a href='#'><div style='background-color: #E000A7'></div></a></li>
-                        <li><a href='#'><div style='background-color: #7F25CF'></div></a></li>
-                        <li><a href='#'><div style='background-color: #2000BF'></div></a></li>
-                        <li><a href='#'><div style='background-color: #2248E3'></div></a></li>
-                        <li><a href='#'><div style='background-color: #0099DA'></div></a></li>
-                        <li><a href='#'><div style='background-color: #66CCFF'></div></a></li>
-                        <li><a href='#'><div style='background-color: #12E37D'></div></a></li>
-                        <li><a href='#'><div style='background-color: #3CD113'></div></a></li>
-                        <li><a href='#'><div style='background-color: #9E9600'></div></a></li>
-                        <li><a href='#'><div style='background-color: #FFF400'></div></a></li>
-                        <li><a href='#'><div style='background-color: #F26B0A'></div></a></li>
-                        <li><a href='#'><div style='background-color: #EC1F2F'></div></a></li>
-                        <li><a href='#'><div style='background-color: #753E33'></div></a></li>
-                    </ul>
-                    <ul id='brush-selector' class='nav pull-right'>
-                        <li><span class='navbar-text'>Brush Size</span></li>
-                        <li class='divider-vertical'></li>
-                        <li><a href='#' data-size='5'>Small</a></li>
-                        <li class='active'><a href='#' data-size='10'>Medium</a></li>
-                        <li><a href='#' data-size='15'>Large</a></li>
-                        <li class='divider-vertical'></li>
-                    </ul>
+
+                    <div class='loading tab'>
+                        <span class='navbar-text pull-right'>Loading</span>
+                    </div>
+                    <div class='draw tab visible'>
+                        <ul id='colour-selector' class='nav pull-right'>
+                            <li><a href='#'><div style='background-color: #F1F1F2'></div></a></li>
+                            <li><a href='#'><div style='background-color: #929497'></div></a></li>
+                            <li><a href='#'><div style='background-color: #404041'></div></a></li>
+                            <li><a href='#'><div style='background-color: #FBDEEF'></div></a></li>
+                            <li><a href='#'><div style='background-color: #E000A7'></div></a></li>
+                            <li><a href='#'><div style='background-color: #7F25CF'></div></a></li>
+                            <li><a href='#'><div style='background-color: #2000BF'></div></a></li>
+                            <li><a href='#'><div style='background-color: #2248E3'></div></a></li>
+                            <li><a href='#'><div style='background-color: #0099DA'></div></a></li>
+                            <li><a href='#'><div style='background-color: #66CCFF'></div></a></li>
+                            <li><a href='#'><div style='background-color: #12E37D'></div></a></li>
+                            <li><a href='#'><div style='background-color: #3CD113'></div></a></li>
+                            <li><a href='#'><div style='background-color: #9E9600'></div></a></li>
+                            <li><a href='#'><div style='background-color: #FFF400'></div></a></li>
+                            <li><a href='#'><div style='background-color: #F26B0A'></div></a></li>
+                            <li><a href='#'><div style='background-color: #EC1F2F'></div></a></li>
+                            <li><a href='#'><div style='background-color: #753E33'></div></a></li>
+                        </ul>
+                        <ul id='brush-selector' class='nav pull-right'>
+                            <li><span class='navbar-text'>Brush Size</span></li>
+                            <li class='divider-vertical'></li>
+                            <li><a href='#' data-size='5'>Small</a></li>
+                            <li class='active'><a href='#' data-size='10'>Medium</a></li>
+                            <li><a href='#' data-size='15'>Large</a></li>
+                            <li class='divider-vertical'></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <div id='main_content'>
-        <!--div class='hero-unit'>
-            <h1>What is this?</h1>
-            <p>Its an Online graffiti wall, Draw something and other people will see it in real time!</p>
-            <p>Created with the help of WebSockets and canvas html5 element. Timelapse loops through some of the history of whats been drawn</p>
-            <p>I built this for fun and as a scalability challange. If you like it drop me a tweet, i am <a href='http://twitter.com/#!/yarekt'>@yarekt</a></p>
-        </div-->
-        <canvas id="canvas">
-            You do not have html5 canvas support
-        </canvas>
+        <div class='about tab'>
+            <div class='hero-unit'>
+                <h1>What is this?</h1>
+                <p>Its an Online graffiti wall, Draw something and other people will see it in real time!</p>
+                <p>Created with the help of WebSockets and canvas html5 element. Timelapse loops through some of the history of whats been drawn</p>
+                <p>I built this for fun and as a scalability challange. If you like it drop me a tweet, i am <a href='http://twitter.com/#!/yarekt'>@yarekt</a></p>
+            </div>
+        </div>
+        <div class='draw tab visible'>
+            <canvas id="canvas">
+                You do not have html5 canvas support
+            </canvas>
+        </div>
     </div>
 </body>
 </html>

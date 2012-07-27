@@ -16,12 +16,10 @@ exports.replay = function(callback) {
     query.on('result', function(row) {
         list.push(row);
         if (list.length >= 1000) {
-            callback(list);
+            callback(list, false);
             list = [];
         }
     }).on('end', function() {
-        if (list.length) {
-            callback(list);
-        }
+        callback(list, true);
     });
 };

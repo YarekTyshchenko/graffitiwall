@@ -35,3 +35,17 @@ html {
     border: 1px solid gray;
     overflow: hidden;
 }
+
+/* Tabs */
+#main_content div.tab {
+    display: none;
+}
+#main_content div.tab.visible {
+    display: block;
+}
+.navbar div.tab {
+    display: none;
+}
+.navbar div.tab.visible {
+    display: inline;
+}

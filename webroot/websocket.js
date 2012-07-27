@@ -1,76 +1,25 @@
-/*
-var list = [];
-var run = '';
-function loadData() {
-    if (run == 'loadData') {
-        var data = list.shift();
-        if (data) {
-            wall.draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
-                loadData();
-        } else {
-            //send({}, {type:'c', page: page});
-        }
-    }
-}
-
-function timelapse() {
-    if (run == 'timelapse') {
-        var data = list.shift();
-        if (data) {
-            wall.draw(data.x1, data.y1, data.x2, data.y2, data.width, data.color);
-                setTimeout(timelapse, 1);
-        } else {
-            //send({}, {type:'t', page: page});
-        }
-    }
-}
- */
-
-var wall;
-var colorlist = [];
 $(function(){
     // Create graffiti wall instance
-    wall = Wall($('#canvas'));
+    var wall = Wall($('#canvas'));
 
     // Make it resize to element size
     wall.resizeToElement($('#main_content'));
 
-    // Populate colours
-    $('#colour-selector a div').each(function(){
-        colorlist.push($(this).css('background-color'));
-    });
+    // Instansiate interface
+    wallInterface = WallInterface();
 
-    var selectColor = function(index) {
-        var selector = $('#colour-selector a div');
-        selector.removeClass('active');
-        selector.filter(function(i){
-            if (i == index) {
-                $(this).addClass('active');
-            }
-        });
+    // Set color and width callbacks and defaults
+    wallInterface.onColorSelect(function(color) {
+        wall.setColor(color);
+    })
 
-        return colorlist[index];
-    }
-    // Select random color
-    wall.setColor(selectColor(Math.floor(Math.random() * colorlist.length)));
+    wall.setColor(wallInterface.getRandomColor());
 
-    // On click set color
-    $('#colour-selector').on('click', 'a', function(e){
-        e.preventDefault();
+    wallInterface.onWidthSelect(function(width) {
+        wall.setWidth(width);
+    })
 
-        wall.setColor(selectColor($(this).parent().index()));
-    });
-
-    // On click set width
-    wall.setWidth($('#brush-selector li.active a').data('size'));
-    $('#brush-selector').on('click', 'a', function(e){
-        e.preventDefault();
-
-        $('#brush-selector li').removeClass('active');
-        $(this).parent().addClass('active');
-
-        wall.setWidth($(this).data('size'));
-    });
+    wall.setWidth(wallInterface.getDefaultWidth());
 
     // Configure socket
     var socket = Socket(window.location.host, 12346);
@@ -83,13 +32,20 @@ $(function(){
         wall.draw(data);
     });
 
-    socket.addCallback('replay', function(list) {
-        for (var i = 0, length = list.length; i < length; i++) {
-            wall.draw(list[i]);
+    socket.addCallback('replay', function(response) {
+        for (var i = 0, length = response.data.length; i < length; i++) {
+            wall.draw(response.data[i]);
+        }
+
+        if (response.end) {
+            wallInterface.switchToDraw();
+            wall.enable();
         }
     })
 
     // Load initial data
+    wallInterface.switchToLoading();
+    wall.disable();
     socket.replay();
 
     // Set up sending draw data to server callback
@@ -98,8 +54,8 @@ $(function(){
         socket.draw(data);
     });
 
-    /*
     // Attach timelapse and wall functions
+    /*
     $('#timelapse').on('click', 'a', function(e){
         e.preventDefault();
         $(this).parent().addClass('active');
@@ -107,9 +63,11 @@ $(function(){
 
         wall.disable();
         wall.clear();
-        socket.timelapse();
+        //socket.timelapse();
     });
+    */
 
+    /*
     $('#wall').on('click', 'a', function(e){
         e.preventDefault();
 
@@ -123,7 +81,7 @@ $(function(){
         wall.clear();
         socket.replay();
         wall.enable();
-    })
-    */
+    });
+     */
 });
 
