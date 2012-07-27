@@ -83,6 +83,12 @@ $(function(){
         wall.draw(data);
     });
 
+    socket.addCallback('replay', function(list) {
+        for (var i = 0, length = list.length; i < length; i++) {
+            wall.draw(list[i]);
+        }
+    })
+
     // Load initial data
     socket.replay();
 

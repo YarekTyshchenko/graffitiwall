@@ -26,10 +26,9 @@ io.sockets.on('connection', function (socket) {
     socket.on('replay', function() {
         // send replay array
         // Loop through the list and emit the data incrementally
-        var list = db.replay();
-        for (var i = 0, length = list.length; i < length; i++) {
-            socket.emit('draw', list[i]);
-        }
+        db.replay(function(list){
+            socket.emit('replay', list);
+        });
     });
 
     /*
