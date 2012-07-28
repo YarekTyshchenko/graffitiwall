@@ -1,4 +1,7 @@
 var Socket = (function(host, port){
+    if (typeof io === 'undefined') {
+        return false;
+    }
     var socket = io.connect('http://' + host + ':' + port);
     socket.on('connect', function(){});
 

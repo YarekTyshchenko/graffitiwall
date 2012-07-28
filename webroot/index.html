@@ -53,14 +53,14 @@
 
                     <span id='debug' class='navbar-text'></span>
 
-                    <div class='loading tab pull-right'>
+                    <div class='loading tab pull-right visible'>
                         <div class='loadingText'>Loading ...</div>
                         <div class="progress">
                             <span class='text'>0%</span>
                             <div class="bar" style="width: 0%;"></div>
                         </div>
                     </div>
-                    <div class='draw tab visible'>
+                    <div class='draw tab'>
                         <ul id='colour-selector' class='nav pull-right'>
                             <li><a href='#'><div style='background-color: #F1F1F2'></div></a></li>
                             <li><a href='#'><div style='background-color: #929497'></div></a></li>
@@ -94,6 +94,13 @@
         </div>
     </div>
     <div id='main_content'>
+        <div class='error tab'>
+            <div class='hero-unit'>
+                <h1>There has been an error</h2>
+                <p>Connection to live wall could not be established.</p>
+                <p>You may refresh the page to see if it was just a glitch in the matrix. If it persists, please give me a holler (@yarekt on Twitter)</p>
+            </div>
+        </div>
         <div class='about tab'>
             <div class='hero-unit'>
                 <h1>What is this?</h1>

@@ -43,9 +43,9 @@ var WallInterface = (function() {
     });
 
 
-    var _showNavTab = function(tabName) {
-        $('.navbar div.tab').removeClass('visible');
-        $('.navbar div.' + tabName + '.tab').addClass('visible');
+    var _showTab = function(tabName, parent) {
+        $(parent+' div.tab').removeClass('visible');
+        $(parent+' div.' + tabName + '.tab').addClass('visible');
     }
 
     var _getProgress = function(current, total) {
@@ -56,15 +56,17 @@ var WallInterface = (function() {
     }
 
     return {
-        switchToAbout: function() {
-            // Change tab bar to blank
-            //_showTab('about');
+        showError: function() {
+            _showTab('error', '#main_content');
+        },
+        showAbout: function() {
+            _showTab('about', '#main_content');
         },
         switchToDraw: function() {
-            _showNavTab('draw');
+            _showTab('draw', '.navbar');
         },
         switchToLoading: function() {
-            _showNavTab('loading');
+            _showTab('loading', '.navbar');
         },
         onColorSelect: function(callback) {
             _onColorSelect = callback;

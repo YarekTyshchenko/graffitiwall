@@ -21,6 +21,11 @@ $(function(){
 
     // Configure socket
     var socket = Socket(window.location.host, 12346);
+    // Handle if server is down
+    if (! socket) {
+        wallInterface.showError();
+        return;
+    }
     socket.addCallback('count', function(count) {
         $('#connected').text(count);
     });
