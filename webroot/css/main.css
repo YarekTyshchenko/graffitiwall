@@ -51,7 +51,8 @@ html {
 }
 .progress {
     width: 200px;
-    margin: 10px 50px 0 0;
+    float: right;
+    margin: 10px 0;
 }
 .progress .bar {
     -webkit-transition: none;
@@ -65,4 +66,14 @@ html {
     text-align: center;
     width: 200px;
     color: #000;
+}
+.navbar div.loading div.loadingText {
+    float: left;
+    margin: 10px 30px;
+}
+
+.noselect {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
 }

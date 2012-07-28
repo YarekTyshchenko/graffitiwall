@@ -61,11 +61,9 @@ var WallInterface = (function() {
             //_showTab('about');
         },
         switchToDraw: function() {
-            // Switch bar to draw mode
             _showNavTab('draw');
         },
         switchToLoading: function() {
-            // Swicth bar to loading mode
             _showNavTab('loading');
         },
         onColorSelect: function(callback) {
@@ -194,14 +192,22 @@ var Wall = (function(ctx) {
                 _canvasElement.height()
             );
         },
-        resizeToElement: function(element) {
+        resizeToElement: function(element, callback) {
             var resize = function(){
                 _canvasElement.attr({
                     width: element.width(),
                     height: element.height()
                 });
+                callback();
             };
-            $(window).resize(resize);
+            var timeout;
+            $(window).resize(function() {
+                if (timeout) {
+                    clearTimeout(timeout);
+                }
+
+                timeout = setTimeout(resize, 1000);
+            });
             resize();
         },
         draw: function(data) {

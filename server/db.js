@@ -9,7 +9,7 @@ exports.insert = function(data) {
 };
 
 exports.replay = function(callback) {
-    connection.query('SELECT count(*) as count FROM points', function(err, result) {
+    connection.query('SELECT count(1) as count FROM points', function(err, result) {
         var total = result[0].count;
         var query = connection.query('SELECT x1, y1, x2, y2, width, color FROM points ORDER BY id ASC');
         var list = [];

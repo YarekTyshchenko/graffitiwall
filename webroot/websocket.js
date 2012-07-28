@@ -2,8 +2,6 @@ $(function(){
     // Create graffiti wall instance
     var wall = Wall($('#canvas'));
 
-    // Make it resize to element size
-    wall.resizeToElement($('#main_content'));
 
     // Instansiate interface
     wallInterface = WallInterface();
@@ -44,10 +42,12 @@ $(function(){
         }
     })
 
-    // Load initial data
-    wallInterface.switchToLoading();
-    wall.disable();
-    socket.replay();
+    // Make it resize to element size
+    wall.resizeToElement($('#main_content'), function() {
+        wallInterface.switchToLoading();
+        wall.disable();
+        socket.replay();
+    });
 
     // Set up sending draw data to server callback
     wall.setDrawCallback(function(data) {

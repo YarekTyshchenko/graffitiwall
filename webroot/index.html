@@ -29,7 +29,7 @@
     </script>
 </head>
 <body>
-    <div class="navbar navbar-fixed-top">
+    <div class="navbar navbar-fixed-top noselect">
         <div class="navbar-inner">
             <div class="container">
                 <span class='brand'>Graffiti Wall</span>
@@ -54,6 +54,7 @@
                     <span id='debug' class='navbar-text'></span>
 
                     <div class='loading tab pull-right'>
+                        <div class='loadingText'>Loading ...</div>
                         <div class="progress">
                             <span class='text'>0%</span>
                             <div class="bar" style="width: 0%;"></div>
@@ -102,7 +103,7 @@
             </div>
         </div>
         <div class='draw tab visible'>
-            <canvas id="canvas">
+            <canvas id="canvas" class='noselect'>
                 You do not have html5 canvas support
             </canvas>
         </div>
