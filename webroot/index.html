@@ -12,7 +12,7 @@
     <link href="css/main.css" rel="stylesheet">
 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script src="http://localhost:12346/socket.io/socket.io.js"></script>
+    <script src="http://graffitiwall.co.uk:12346/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="socket.io.js"></script>
     <script type="text/javascript" src="wall.js"></script>
     <script type="text/javascript" src="websocket.js"></script>
@@ -53,8 +53,11 @@
 
                     <span id='debug' class='navbar-text'></span>
 
-                    <div class='loading tab'>
-                        <span class='navbar-text pull-right'>Loading</span>
+                    <div class='loading tab pull-right'>
+                        <div class="progress">
+                            <span class='text'></span>
+                            <div class="bar" style="width: 0%;"></div>
+                        </div>
                     </div>
                     <div class='draw tab visible'>
                         <ul id='colour-selector' class='nav pull-right'>

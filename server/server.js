@@ -25,9 +25,11 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('replay', function(data) {
-        db.replay(function(list, end){
+        db.replay(function(list, index, total, end){
             socket.emit('replay', {
                 data: list,
+                index: index,
+                total: total,
                 end: end
             });
         });

@@ -33,6 +33,7 @@ $(function(){
     });
 
     socket.addCallback('replay', function(response) {
+        wallInterface.progress(response.index, response.total);
         for (var i = 0, length = response.data.length; i < length; i++) {
             wall.draw(response.data[i]);
         }
