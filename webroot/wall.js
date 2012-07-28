@@ -152,6 +152,8 @@ var Wall = (function(ctx) {
     var _click = false;
     var _p;
     _canvasElement.mousedown(function(e){
+        e.preventDefault();
+
         if (_enabled) {
             _click = true;
             _p = _getPosition(e);
@@ -172,6 +174,8 @@ var Wall = (function(ctx) {
     });
 
     _canvasElement.mousemove(function(e){
+        e.preventDefault();
+
         if (_click && _enabled) {
             var np = _getPosition(e);
             var data = {
