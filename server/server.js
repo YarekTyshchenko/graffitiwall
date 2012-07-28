@@ -1,6 +1,5 @@
 var io = require('socket.io').listen(12346);
 io.set('log level', 2);
-io.set('transports', ['websocket']);
 
 var db = require('./db');
 
