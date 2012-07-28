@@ -1,0 +1,10 @@
+- Install build-essential for fast extensions
+    sudo apt-get install build-essential
+- Install node
+- install socket.io
+    sudo npm install socket.io
+- Install mysql library
+    sudo npm install mysql@2.0.0-alpha3
+- Allow server through firewall
+    sudo ufw allow 12346
+
