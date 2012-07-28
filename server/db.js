@@ -1,9 +1,7 @@
 var mysql = require('mysql');
 var connection = mysql.createConnection({
-    host: 'hermes.yarekt.co.uk',
-    user: 'wraith',
-    password: 'K9YYCnYcDAqbZZnK',
-    database: 'graffitiwall_testing'
+    user: 'graffitiwall',
+    database: 'graffitiwall_websocket'
 });
 
 exports.insert = function(data) {
