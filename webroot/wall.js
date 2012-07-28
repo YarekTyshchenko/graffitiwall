@@ -62,6 +62,9 @@ var WallInterface = (function() {
         showAbout: function() {
             _showTab('about', '#main_content');
         },
+        showDraw: function() {
+            _showTab('draw', '#main_content');
+        },
         switchToDraw: function() {
             _showTab('draw', '.navbar');
         },

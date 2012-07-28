@@ -60,6 +60,26 @@ $(function(){
         socket.draw(data);
     });
 
+    // Attach navbar buttons
+    $('#wall').on('click', 'a', function(e){
+        e.preventDefault();
+
+        wallInterface.showDraw()
+        wall.enable();
+        $('.nav li.nav-link').removeClass('active');
+        $(this).parent().addClass('active');
+
+    });
+
+    $('#about').on('click', 'a', function(e) {
+        e.preventDefault();
+
+        wall.disable();
+        $('.nav li.nav-link').removeClass('active');
+        $(this).parent().addClass('active');
+        wallInterface.showAbout();
+    });
+
     // Attach timelapse and wall functions
     /*
     $('#timelapse').on('click', 'a', function(e){
@@ -72,22 +92,5 @@ $(function(){
         //socket.timelapse();
     });
     */
-
-    /*
-    $('#wall').on('click', 'a', function(e){
-        e.preventDefault();
-
-        // Prevent reloading
-        if ($(this).parent().is('.active')) {
-            return;
-        }
-        $(this).parent().addClass('active');
-        $('#timelapse').removeClass('active');
-
-        wall.clear();
-        socket.replay();
-        wall.enable();
-    });
-     */
 });
 
