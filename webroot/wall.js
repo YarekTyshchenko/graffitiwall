@@ -194,12 +194,18 @@ var Wall = (function(ctx) {
         },
         resizeToElement: function(element, callback) {
             var resize = function(){
-                _canvasElement.attr({
-                    width: element.width(),
-                    height: element.height()
-                });
-                callback();
+                // If we are making canvas bigger
+                if (element.width() > _canvasElement.width() ||
+                    element.height() > _canvasElement.height())
+                {
+                    _canvasElement.attr({
+                        width: element.width(),
+                        height: element.height()
+                    });
+                    callback();
+                }
             };
+
             var timeout;
             $(window).resize(function() {
                 if (timeout) {
