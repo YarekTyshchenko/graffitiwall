@@ -65,6 +65,10 @@ var WallInterface = (function() {
         showDraw: function() {
             _showTab('draw', '#main_content');
         },
+        showTimelapse: function() {
+            _showTab('timelapse', '#main_content');
+            //_showTab('timelapse', '.navbar');
+        },
         switchToDraw: function() {
             _showTab('draw', '.navbar');
         },
@@ -94,9 +98,8 @@ var WallInterface = (function() {
 /**
  * Canvas wrapping object
  */
-var Wall = (function(ctx) {
-    var _canvasElement = ctx;
-    var _context = ctx[0].getContext('2d');
+var Wall = (function(canvasObject) {
+    var _canvas = canvasObject;
     var _enabled = true;
     var _color;
     var _width;
@@ -119,6 +122,82 @@ var Wall = (function(ctx) {
 
         return {"x": x, "y": y};
     };
+
+    // Init
+    var _click = false;
+    var _p;
+    _canvas.mousedown(function(e){
+        e.preventDefault();
+
+        if (_enabled) {
+            _click = true;
+            _p = _getPosition(e);
+            var data = {
+                x1: _p.x,
+                y1: _p.y,
+                x2: _p.x,
+                y2: _p.y,
+                width: _width,
+                color: _color
+            };
+            _canvas.draw(data);
+            _drawCallback(data);
+        }
+    });
+    $(window).mouseup(function(e){
+        _click = false;
+    });
+
+    _canvas.mousemove(function(e){
+        e.preventDefault();
+
+        if (_click && _enabled) {
+            var np = _getPosition(e);
+            var data = {
+                x1: np.x,
+                y1: np.y,
+                x2: _p.x,
+                y2: _p.y,
+                width: _width,
+                color: _color
+            };
+            _canvas.draw(data);
+            _drawCallback(data);
+            _p = np;
+        }
+    });
+
+    return {
+        clear: function() {
+            _canvas.clear();
+        },
+        resizeToElement: function(element, callback) {
+            _canvas.resizeToElement(element, callback, 1000);
+        },
+        draw: function(data) {
+            _canvas.draw(data);
+        },
+        setColor: function(c) {
+            _color = c;
+        },
+        setWidth: function(w) {
+            _width = w;
+        },
+        setDrawCallback: function(callback) {
+            _drawCallback = callback;
+        },
+        enable: function() {
+            _enabled = true;
+        },
+        disable: function() {
+            _enabled = false;
+        }
+    };
+});
+
+var CanvasObject = (function(ctx){
+    var _canvasElement = ctx;
+    var _context = ctx[0].getContext('2d');
 
     var __draw = function(x1, y1, x2, y2, width, color) {
         _context.fillStyle = color;
@@ -146,53 +225,12 @@ var Wall = (function(ctx) {
             data.width,
             data.color
         );
-    }
-
-    // Init
-    var _click = false;
-    var _p;
-    _canvasElement.mousedown(function(e){
-        e.preventDefault();
-
-        if (_enabled) {
-            _click = true;
-            _p = _getPosition(e);
-            var data = {
-                x1: _p.x,
-                y1: _p.y,
-                x2: _p.x,
-                y2: _p.y,
-                width: _width,
-                color: _color
-            };
-            _draw(data);
-            _drawCallback(data);
-        }
-    });
-    $(window).mouseup(function(e){
-        _click = false;
-    });
-
-    _canvasElement.mousemove(function(e){
-        e.preventDefault();
-
-        if (_click && _enabled) {
-            var np = _getPosition(e);
-            var data = {
-                x1: np.x,
-                y1: np.y,
-                x2: _p.x,
-                y2: _p.y,
-                width: _width,
-                color: _color
-            };
-            _draw(data);
-            _drawCallback(data);
-            _p = np;
-        }
-    });
+    };
 
     return {
+        draw: function(data) {
+            _draw(data);
+        },
         clear: function() {
             _context.clearRect(
                 0,
@@ -201,7 +239,7 @@ var Wall = (function(ctx) {
                 _canvasElement.height()
             );
         },
-        resizeToElement: function(element, callback) {
+        resizeToElement: function(element, callback, delay) {
             var resize = function(){
                 // If we are making canvas bigger
                 if (element.width() > _canvasElement.width() ||
@@ -221,27 +259,15 @@ var Wall = (function(ctx) {
                     clearTimeout(timeout);
                 }
 
-                timeout = setTimeout(resize, 1000);
+                timeout = setTimeout(resize, delay);
             });
             resize();
         },
-        draw: function(data) {
-            _draw(data);
+        mousemove: function(callback) {
+            _canvasElement.mousemove(callback);
         },
-        setColor: function(c) {
-            _color = c;
-        },
-        setWidth: function(w) {
-            _width = w;
-        },
-        setDrawCallback: function(callback) {
-            _drawCallback = callback;
-        },
-        enable: function() {
-            _enabled = true;
-        },
-        disable: function() {
-            _enabled = false;
+        mousedown: function(callback) {
+            _canvasElement.mousedown(callback);
         }
     };
 });

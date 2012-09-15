@@ -1,6 +1,7 @@
 $(function(){
     // Create graffiti wall instance
-    var wall = Wall($('#canvas'));
+    var canvasObject = CanvasObject($('#canvas'));
+    var wall = Wall(canvasObject);
 
 
     // Instansiate interface
@@ -64,11 +65,10 @@ $(function(){
     $('#wall').on('click', 'a', function(e){
         e.preventDefault();
 
-        wallInterface.showDraw()
         wall.enable();
         $('.nav li.nav-link').removeClass('active');
         $(this).parent().addClass('active');
-
+        wallInterface.showDraw();
     });
 
     $('#about').on('click', 'a', function(e) {
@@ -80,17 +80,14 @@ $(function(){
         wallInterface.showAbout();
     });
 
-    // Attach timelapse and wall functions
-    /*
+    // Attach time lapse functions
     $('#timelapse').on('click', 'a', function(e){
         e.preventDefault();
-        $(this).parent().addClass('active');
-        $('#wall').removeClass('active');
-
         wall.disable();
-        wall.clear();
-        //socket.timelapse();
+
+        $('.nav li.nav-link').removeClass('active');
+        $(this).parent().addClass('active');
+        wallInterface.showTimelapse();
     });
-    */
 });
 
