@@ -1,5 +1,6 @@
 $(function(){
     // Create graffiti wall instance
+    var _namespace = namespace || window.location.pathname || '';
     var canvasObject = CanvasObject($('#draw-canvas'));
     var wall = Wall(canvasObject);
     var timelapseCanvas = CanvasObject($('#timelapse-canvas'));
@@ -62,13 +63,13 @@ $(function(){
     wall.resizeToElement($('#main_content'), function() {
         wallInterface.switchToLoading();
         wall.disable();
-        socket.replay(window.location.pathname);
+        socket.replay(_namespace);
     });
 
     // Set up sending draw data to server callback
     wall.setDrawCallback(function(data) {
         // Add the namespace
-        data.namespace = window.location.pathname;
+        data.namespace = _namespace;
         // Send data to socket
         socket.draw(data);
     });
@@ -100,7 +101,7 @@ $(function(){
         $('.nav li.nav-link').removeClass('active');
         $(this).parent().addClass('active');
         wallInterface.showTimelapse();
-        socket.timelapse(window.location.pathname);
+        socket.timelapse(_namespace);
         timelapse.start();
     });
 });
