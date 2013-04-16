@@ -1,5 +1,6 @@
 CREATE TABLE `points` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `namespace` varchar(255) NULL,
   `x1` int(11) NOT NULL,
   `y1` int(11) NOT NULL,
   `x2` int(11) NOT NULL,
@@ -12,6 +13,7 @@ CREATE TABLE `points` (
 
 CREATE TABLE `timelapse` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `namespace` varchar(255) NULL,
   `x1` int(11) NOT NULL,
   `y1` int(11) NOT NULL,
   `x2` int(11) NOT NULL,

@@ -12,13 +12,13 @@ $(function(){
     // Set color and width callbacks and defaults
     wallInterface.onColorSelect(function(color) {
         wall.setColor(color);
-    })
+    });
 
     wall.setColor(wallInterface.getRandomColor());
 
     wallInterface.onWidthSelect(function(width) {
         wall.setWidth(width);
-    })
+    });
 
     wall.setWidth(wallInterface.getDefaultWidth());
 
@@ -48,7 +48,7 @@ $(function(){
             wallInterface.switchToDraw();
             wall.enable();
         }
-    })
+    });
 
     timelapse.progressCallback(function(i, t) {
         wallInterface.progress(i, t);
@@ -62,11 +62,13 @@ $(function(){
     wall.resizeToElement($('#main_content'), function() {
         wallInterface.switchToLoading();
         wall.disable();
-        socket.replay();
+        socket.replay(window.location.pathname);
     });
 
     // Set up sending draw data to server callback
     wall.setDrawCallback(function(data) {
+        // Add the namespace
+        data.namespace = window.location.pathname;
         // Send data to socket
         socket.draw(data);
     });
@@ -98,7 +100,7 @@ $(function(){
         $('.nav li.nav-link').removeClass('active');
         $(this).parent().addClass('active');
         wallInterface.showTimelapse();
-        socket.timelapse();
+        socket.timelapse(window.location.pathname);
         timelapse.start();
     });
 });

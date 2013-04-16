@@ -17,11 +17,13 @@ io.sockets.on('connection', function (socket) {
 
     // Actual events
     socket.on('draw', function(data) {
+        data.namespace = data.namespace.replace(/[^a-zA-Z0-9]/g, '');
         socket.broadcast.emit('draw', data);
         db.insert(data);
     });
 
     socket.on('replay', function(data) {
+        var namespace = data.namespace.replace(/[^a-zA-Z0-9]/g, '');
         db.replay(function(list, index, total, end){
             socket.emit('replay', {
                 data: list,
@@ -29,10 +31,11 @@ io.sockets.on('connection', function (socket) {
                 total: total,
                 end: end
             });
-        });
+        }, namespace);
     });
 
     socket.on('timelapse', function(data) {
+        var namespace = data.namespace.replace(/[^a-zA-Z0-9]/g, '');
         db.timelapse(function(list, index, total, end){
             socket.emit('timelapse', {
                 data: list,
@@ -40,7 +43,7 @@ io.sockets.on('connection', function (socket) {
                 total: total,
                 end: end
             });
-        });
+        }, namespace);
     })
 });
 

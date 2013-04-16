@@ -5,18 +5,22 @@ var connection = mysql.createConnection({
 });
 
 var _getCountFrom = function(table, callback) {
-    connection.query('SELECT count(1) as count FROM ' + table, function(err, result) {
+    connection.query('SELECT count(*) as count FROM ' + table, function(err, result) {
         callback(result[0].count);
     });
-}
+};
 
 exports.insert = function(data) {
     connection.query('INSERT INTO points SET ?', data);
 };
 
-exports.replay = function(callback) {
+exports.replay = function(callback, namespace) {
+    namespace = namespace || '';
     _getCountFrom('points', function(total){
-        var query = connection.query('SELECT x1, y1, x2, y2, width, color FROM points ORDER BY id ASC');
+        var query = connection.query(
+            'SELECT x1, y1, x2, y2, width, color FROM points WHERE namespace = ? ORDER BY id ASC',
+            [namespace]
+        );
         var list = [];
         var index = 0;
         query.on('result', function(row) {
@@ -37,7 +41,9 @@ exports.timelapse = function(callback){
         total = 10000;
         var page = 0;
         for (var i = Math.ceil(total/1000) - 1; i >= 0; i--) {
-            var query = connection.query('SELECT x1, y1, x2, y2, width, color FROM timelapse ORDER BY id ASC LIMIT ' + page + ',1000');
+            var query = connection.query(
+                'SELECT x1, y1, x2, y2, width, color FROM timelapse ORDER BY id ASC LIMIT ' + page + ',1000'
+            );
             page += 1000;
                 console.log(page);
 
@@ -51,6 +57,6 @@ exports.timelapse = function(callback){
                 }
                 callback(list, page/1000, total, end);
             });
-        };
+        }
     });
 };

@@ -18,8 +18,8 @@ var Socket = (function(host, port){
         addCallback: function(name, callback) {
             socket.on(name, callback);
         },
-        replay: function() {
-            socket.emit('replay');
+        replay: function(namespace) {
+            socket.emit('replay', {namespace: namespace});
         },
         timelapse: function() {
             socket.emit('timelapse');
