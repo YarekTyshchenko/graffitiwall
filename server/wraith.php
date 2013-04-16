@@ -20,6 +20,7 @@ class Wraith
         $total = $result->num_rows;
         
         $m = memory_get_usage();
+        echo "count (culled) / total Buffer: count Mem: Bytes".PHP_EOL;
         while ($line = $result->fetch_assoc()) {
             if ($this->_count % 100 == 0) {
                 echo ($this->_count) . ' ('.$this->_culled.') / ' . $total;

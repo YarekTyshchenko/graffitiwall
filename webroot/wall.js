@@ -67,7 +67,7 @@ var WallInterface = (function() {
         },
         showTimelapse: function() {
             _showTab('timelapse', '#main_content');
-            //_showTab('timelapse', '.navbar');
+            _showTab('loading', '.navbar');
         },
         switchToDraw: function() {
             _showTab('draw', '.navbar');
@@ -96,7 +96,7 @@ var WallInterface = (function() {
 });
 
 /**
- * Canvas wrapping object
+ * Drawing Wall object
  */
 var Wall = (function(canvasObject) {
     var _canvas = canvasObject;
@@ -195,6 +195,45 @@ var Wall = (function(canvasObject) {
     };
 });
 
+/**
+ * Timelapse Display object
+ */
+var Timelapse = (function(CanvasObject){
+    var _canvas = CanvasObject;
+
+    var _frames = [];
+
+    var _progressCallback = function(){};
+
+    return {
+        receive: function(data) {
+            // append data to _frames
+            for (var i = 0, length = data.length; i < length; i++) {
+                _frames.push(data[i]);
+            };
+            console.log(_frames.length);
+            
+        },
+        start: function() {
+            _canvas.clear();
+            // Start the animation from _frames;
+            var anim = function() {
+                var frame = _frames.pop();
+                _canvas.draw(frame);
+                
+                setTimeout(anim, 1);
+            }
+            anim();
+        },
+        progressCallback: function(callback) {
+            _progressCallback = callback;
+        }
+    };
+});
+
+/**
+ * Canvas Wrapping object
+ */
 var CanvasObject = (function(ctx){
     var _canvasElement = ctx;
     var _context = ctx[0].getContext('2d');

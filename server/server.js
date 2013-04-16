@@ -18,8 +18,6 @@ io.sockets.on('connection', function (socket) {
     // Actual events
     socket.on('draw', function(data) {
         socket.broadcast.emit('draw', data);
-
-        // Save later on
         db.insert(data);
     });
 
@@ -33,6 +31,17 @@ io.sockets.on('connection', function (socket) {
             });
         });
     });
+
+    socket.on('timelapse', function(data) {
+        db.timelapse(function(list, index, total, end){
+            socket.emit('timelapse', {
+                data: list,
+                index: index,
+                total: total,
+                end: end
+            });
+        });
+    })
 });
 
 function count() {

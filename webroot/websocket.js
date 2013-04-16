@@ -1,11 +1,13 @@
 $(function(){
     // Create graffiti wall instance
-    var canvasObject = CanvasObject($('#canvas'));
+    var canvasObject = CanvasObject($('#draw-canvas'));
     var wall = Wall(canvasObject);
-
+    var timelapseCanvas = CanvasObject($('#timelapse-canvas'));
+    timelapseCanvas.resizeToElement($('#main_content'), function(){});
+    var timelapse = Timelapse(timelapseCanvas);
 
     // Instansiate interface
-    wallInterface = WallInterface();
+    var wallInterface = WallInterface();
 
     // Set color and width callbacks and defaults
     wallInterface.onColorSelect(function(color) {
@@ -48,7 +50,15 @@ $(function(){
         }
     })
 
-    // Make it resize to element size
+    timelapse.progressCallback(function(i, t) {
+        wallInterface.progress(i, t);
+    });
+
+    socket.addCallback('timelapse', function(response){
+        timelapse.receive(response.data);
+    });
+
+    // Make it resize to element size and start the wall
     wall.resizeToElement($('#main_content'), function() {
         wallInterface.switchToLoading();
         wall.disable();
@@ -88,6 +98,8 @@ $(function(){
         $('.nav li.nav-link').removeClass('active');
         $(this).parent().addClass('active');
         wallInterface.showTimelapse();
+        socket.timelapse();
+        timelapse.start();
     });
 });
 

@@ -75,10 +75,10 @@ class DB {
         return $rows;
     }
 
-    public function getResult()
+    public function getResult($table = 'points', $order = 'DESC')
     {
         $db = $this->_getDb();
-        $result = $db->query("SELECT id, x1, y1, x2, y2, width FROM points ORDER BY id DESC");
+        $result = $db->query("SELECT id, x1, y1, x2, y2, width FROM {$table} ORDER BY id {$order}");
         return $result;
     }
 }
