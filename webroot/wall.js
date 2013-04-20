@@ -106,32 +106,13 @@ var Wall = (function(canvasObject) {
 
     var _drawCallback = function(){};
 
-    var _getPosition = function(e) {
-        var targ;
-        if (!e)
-            e = window.event;
-        if (e.target)
-            targ = e.target;
-        else if (e.srcElement)
-            targ = e.srcElement;
-        if (targ.nodeType == 3) // defeat Safari bug
-            targ = targ.parentNode;
-
-        var x = e.pageX - $(targ).offset().left;
-        var y = e.pageY - $(targ).offset().top;
-
-        return {"x": x, "y": y};
-    };
-
     // Init
     var _click = false;
     var _p;
-    _canvas.mousedown(function(e){
-        e.preventDefault();
-
+    _canvas.mousedown(function(p){
         if (_enabled) {
             _click = true;
-            _p = _getPosition(e);
+            _p = p;
             var data = {
                 x1: _p.x,
                 y1: _p.y,
@@ -144,15 +125,12 @@ var Wall = (function(canvasObject) {
             _drawCallback(data);
         }
     });
-    $(window).mouseup(function(e){
+    _canvas.mouseup(function(e){
         _click = false;
     });
 
-    _canvas.mousemove(function(e){
-        e.preventDefault();
-
+    _canvas.mousemove(function(np){
         if (_click && _enabled) {
-            var np = _getPosition(e);
             var data = {
                 x1: np.x,
                 y1: np.y,
@@ -282,6 +260,28 @@ var CanvasObject = (function(ctx){
         );
     };
 
+    var _getPosition = function(e) {
+        var targ;
+        if (!e)
+            e = window.event;
+        if (e.target)
+            targ = e.target;
+        else if (e.targetTouches) {
+            return {
+                x: e.targetTouches[0].pageX,
+                y: e.targetTouches[0].pageY
+            };
+        } else if (e.srcElement)
+            targ = e.srcElement;
+        if (targ.nodeType == 3) // defeat Safari bug
+            targ = targ.parentNode;
+
+        var x = e.pageX - $(targ).offset().left;
+        var y = e.pageY - $(targ).offset().top;
+
+        return {x: x, y: y};
+    };
+
     return {
         draw: function(data) {
             _draw(data);
@@ -308,10 +308,44 @@ var CanvasObject = (function(ctx){
             }
         },
         mousemove: function(callback) {
-            _canvasElement.mousemove(callback);
+            _canvasElement.mousemove(function(e) {
+                e.preventDefault();
+
+                var p = _getPosition(e);
+                callback(p);
+            });
+
+            _canvasElement[0].addEventListener('touchmove', function(event) {
+                // Try to capture all touch events
+                var touches = [];
+                var i, len = event.targetTouches.length;
+                for (i = 0; i < len; i++) {
+                    touches.push({
+                        id: i,
+                        x: event.targetTouches[i].pageX,
+                        y: event.targetTouches[i].pageY
+                    });
+                }
+                callback(touches[0]);
+            }, false);
         },
         mousedown: function(callback) {
-            _canvasElement.mousedown(callback);
+            _canvasElement.mousedown(function(e) {
+                e.preventDefault();
+
+                var p = _getPosition(e);
+                callback(p);
+            });
+            _canvasElement[0].addEventListener('touchstart', function(event) {
+                var p = _getPosition(event);
+                callback(p);
+            });
+        },
+        mouseup: function(callback) {
+            $(window).mouseup(callback);
+            _canvasElement[0].addEventListener('touchend', function(e) {
+                callback(e);
+            });
         }
     };
 });
