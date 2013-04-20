@@ -10,6 +10,8 @@ html {
 }
 #canvas {
     cursor: crosshair;
+    -ms-touch-action: none;
+    -webkit-touch-action: none;
 }
 
 #main_content {
@@ -73,7 +75,8 @@ html {
 }
 
 .noselect {
-    user-select: none;
+    -ms-user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
+    user-select: none;
 }

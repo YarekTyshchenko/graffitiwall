@@ -23,7 +23,7 @@ var WallInterface = (function() {
         });
 
         return _colorlist[index];
-    }
+    };
 
     // On click set color
     $('#colour-selector').on('click', 'a', function(e){
@@ -46,14 +46,14 @@ var WallInterface = (function() {
     var _showTab = function(tabName, parent) {
         $(parent+' div.tab').removeClass('visible');
         $(parent+' div.' + tabName + '.tab').addClass('visible');
-    }
+    };
 
     var _getProgress = function(current, total) {
         if (! total) {
             return 0;
         }
         return current / total;
-    }
+    };
 
     return {
         showError: function() {
@@ -82,7 +82,7 @@ var WallInterface = (function() {
             _onWidthSelect = callback;
         },
         getRandomColor: function() {
-            return _selectColor(Math.floor(Math.random() * _colorlist.length))
+            return _selectColor(Math.floor(Math.random() * _colorlist.length));
         },
         getDefaultWidth: function() {
             return $('#brush-selector li.active a').data('size');
@@ -167,6 +167,11 @@ var Wall = (function(canvasObject) {
         }
     });
 
+    // Prevent scrolling of the entire body
+    document.body.addEventListener('touchmove', function(event){
+        event.preventDefault();
+    }, false);
+
     return {
         clear: function() {
             _canvas.clear();
@@ -221,9 +226,9 @@ var Timelapse = (function(CanvasObject){
             // append data to _frames
             for (var i = 0, length = data.length; i < length; i++) {
                 _frames.push(data[i]);
-            };
+            }
             console.log(_frames.length);
-            
+
         },
         start: function() {
             _canvas.clear();
@@ -231,9 +236,9 @@ var Timelapse = (function(CanvasObject){
             var anim = function() {
                 var frame = _frames.pop();
                 _canvas.draw(frame);
-                
+
                 setTimeout(anim, 1);
-            }
+            };
             anim();
         },
         progressCallback: function(callback) {
