@@ -1,8 +1,8 @@
-var Socket = (function(host, port){
+var Socket = (function(host, port, namespace){
     if (typeof io === 'undefined') {
         return false;
     }
-    var socket = io.connect('http://' + host + ':' + port);
+    var socket = io.connect('http://' + host + ':' + port + '/' + namespace);
     socket.on('connect', function(){});
 
     return {
@@ -18,8 +18,8 @@ var Socket = (function(host, port){
         addCallback: function(name, callback) {
             socket.on(name, callback);
         },
-        replay: function(namespace) {
-            socket.emit('replay', {namespace: namespace});
+        replay: function(softNamespace) {
+            socket.emit('replay', {namespace: softNamespace});
         },
         timelapse: function() {
             socket.emit('timelapse');

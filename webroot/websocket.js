@@ -29,7 +29,7 @@ $(function(){
     wall.setWidth(wallInterface.getDefaultWidth());
 
     // Configure socket
-    var socket = Socket(window.location.host, 12346);
+    var socket = Socket(window.location.host, 12346, namespace);
     // Handle if server is down
     if (! socket) {
         wallInterface.showError();
