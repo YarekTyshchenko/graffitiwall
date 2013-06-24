@@ -1,7 +1,12 @@
 $(function(){
-    // Create graffiti wall instance
-    var _namespace = namespace || window.location.pathname || '';
+    // Artificial namespace
+    var _namespace = window.location.pathname || '';
+    if (typeof namespace !== "undefined") {
+        var _namespace = namespace;
+    }
+
     var canvasObject = CanvasObject($('#draw-canvas'));
+    // Create graffiti wall instance
     var wall = Wall(canvasObject);
     var timelapseCanvas = CanvasObject($('#timelapse-canvas'));
     timelapseCanvas.resizeToElement($('#main_content'), function(){});
