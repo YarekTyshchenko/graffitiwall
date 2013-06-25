@@ -1,15 +1,9 @@
 $(function(){
-    // Artificial namespace
-    var _namespace = window.location.pathname || '';
-    if (typeof namespace !== "undefined") {
-        var _namespace = namespace;
-    }
-
     var canvasObject = CanvasObject($('#draw-canvas'));
     // Create graffiti wall instance
     var wall = Wall(canvasObject);
     var timelapseCanvas = CanvasObject($('#timelapse-canvas'));
-    timelapseCanvas.resizeToElement($('#main_content'), function(){});
+    timelapseCanvas.resize($('#main_content'), function(){});
     var timelapse = Timelapse(timelapseCanvas);
 
     // Instansiate interface
@@ -29,7 +23,7 @@ $(function(){
     wall.setWidth(wallInterface.getDefaultWidth());
 
     // Configure socket
-    var socket = Socket(window.location.host, 12346, namespace);
+    var socket = Socket(window.location.host, 12346);
     // Handle if server is down
     if (! socket) {
         wallInterface.showError();
@@ -68,17 +62,19 @@ $(function(){
     wall.resizeToElement($('#main_content'), function() {
         wallInterface.switchToLoading();
         wall.disable();
-        socket.replay(_namespace);
+        socket.replay();
     });
 
     // Set up sending draw data to server callback
     wall.setDrawCallback(function(data) {
-        // Add the namespace
-        data.namespace = _namespace;
         // Send data to socket
         socket.draw(data);
     });
 
+    // Begin loading data
+    socket.connect(function(){
+        socket.replay();
+    });
     // Attach navbar buttons
     $('#wall').on('click', 'a', function(e){
         e.preventDefault();
@@ -106,7 +102,7 @@ $(function(){
         $('.nav li.nav-link').removeClass('active');
         $(this).parent().addClass('active');
         wallInterface.showTimelapse();
-        socket.timelapse(_namespace);
+        socket.timelapse();
         timelapse.start();
     });
 });

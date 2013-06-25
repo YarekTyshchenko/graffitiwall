@@ -171,8 +171,19 @@ var Wall = (function(canvasObject) {
         clear: function() {
             _canvas.clear();
         },
-        resizeToElement: function(element, callback) {
-            _canvas.resizeToElement(element, callback, 1000);
+        resizeToElement: function(element, callback, delay) {
+            var timeout;
+            $(window).resize(function() {
+                if (timeout) {
+                    clearTimeout(timeout);
+                }
+
+                timeout = setTimeout(function() {
+                    _canvas.resize(element, callback);
+                }, delay);
+            });
+            // Do it now
+            _canvas.resize(element);
         },
         draw: function(data) {
             _canvas.draw(data);
@@ -278,29 +289,18 @@ var CanvasObject = (function(ctx){
                 _canvasElement.height()
             );
         },
-        resizeToElement: function(element, callback, delay) {
-            var resize = function(){
-                // If we are making canvas bigger
-                if (element.width() > _canvasElement.width() ||
-                    element.height() > _canvasElement.height())
-                {
-                    _canvasElement.attr({
-                        width: element.width(),
-                        height: element.height()
-                    });
-                    callback();
-                }
-            };
-
-            var timeout;
-            $(window).resize(function() {
-                if (timeout) {
-                    clearTimeout(timeout);
-                }
-
-                timeout = setTimeout(resize, delay);
-            });
-            resize();
+        resize: function(element, callback) {
+            callback = callback || function(){};
+            if (element.width() > _canvasElement.width() ||
+                element.height() > _canvasElement.height())
+            {
+            // If we are making canvas bigger fire callback
+                _canvasElement.attr({
+                    width: element.width(),
+                    height: element.height()
+                });
+                callback();
+            }
         },
         mousemove: function(callback) {
             _canvasElement.mousemove(callback);
