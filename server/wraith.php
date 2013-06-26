@@ -10,13 +10,13 @@ class Wraith
     protected $_culled = 0;
     protected $_count = 0;
 
-    public function cull()
+    public function cull($namespace)
     {
         $db = new DB();
         $start = microtime(true);
 
         // loop through file
-        $result = $db->getResult();
+        $result = $db->getResult('points', $namespace);
         $total = $result->num_rows;
         
         $m = memory_get_usage();
@@ -155,4 +155,8 @@ class Wraith
 }
 
 $wraith = new Wraith();
-$wraith->cull();
+$namespace = '/';
+if (!empty($argv[1])) {
+    $namespace = $argv[1];
+}
+$wraith->cull($namespace);
