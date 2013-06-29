@@ -100,7 +100,7 @@ var WallInterface = (function() {
  */
 var Wall = (function(canvasObject) {
     var _canvas = canvasObject;
-    var _enabled = true;
+    var _enabled = false;
     var _color;
     var _width;
 

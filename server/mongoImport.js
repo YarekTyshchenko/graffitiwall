@@ -44,9 +44,10 @@ MongoClient.connect('mongodb://127.0.0.1:27017/graffitiwall', {db: {native_parse
         //console.log(row);
         row.culled = false;
         collection.insert(row, function(err, docs) {
-            console.log(docs);
+            //console.log(docs);
         });
     }, function() {
+        console.log('Done');
         //db.close();
         //process.exit();
     });

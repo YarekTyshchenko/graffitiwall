@@ -2,9 +2,9 @@ $(function(){
     var canvasObject = CanvasObject($('#draw-canvas'));
     // Create graffiti wall instance
     var wall = Wall(canvasObject);
-    var timelapseCanvas = CanvasObject($('#timelapse-canvas'));
-    timelapseCanvas.resize($('#main_content'), function(){});
-    var timelapse = Timelapse(timelapseCanvas);
+    //var timelapseCanvas = CanvasObject($('#timelapse-canvas'));
+    //timelapseCanvas.resize($('#main_content'), function(){});
+    //var timelapse = Timelapse(timelapseCanvas);
 
     // Instansiate interface
     var wallInterface = WallInterface();
@@ -50,20 +50,21 @@ $(function(){
         }
     });
 
-    timelapse.progressCallback(function(i, t) {
-        wallInterface.progress(i, t);
-    });
+    //timelapse.progressCallback(function(i, t) {
+    //    wallInterface.progress(i, t);
+    //});
 
-    socket.addCallback('timelapse', function(response){
-        timelapse.receive(response.data);
-    });
+    //socket.addCallback('timelapse', function(response){
+    //    timelapse.receive(response.data);
+    //});
 
-    // Make it resize to element size and start the wall
-    wall.resizeToElement($('#main_content'), function() {
+    var startup = function() {
         wallInterface.switchToLoading();
         wall.disable();
         socket.replay();
-    });
+    };
+    // Make it resize to element size and start the wall
+    wall.resizeToElement($('#main_content'), startup);
 
     // Set up sending draw data to server callback
     wall.setDrawCallback(function(data) {
@@ -72,38 +73,32 @@ $(function(){
     });
 
     // Begin loading data
-    socket.connect(function(){
-        socket.replay();
-    });
+    socket.connect(startup);
+
     // Attach navbar buttons
-    $('#wall').on('click', 'a', function(e){
+    $('#page-selector').on('click', 'li#wall a', function(e){
         e.preventDefault();
 
         wall.enable();
         $('.nav li.nav-link').removeClass('active');
         $(this).parent().addClass('active');
         wallInterface.showDraw();
-    });
-
-    $('#about').on('click', 'a', function(e) {
+    }).on('click', 'li#about a', function(e) {
         e.preventDefault();
 
         wall.disable();
         $('.nav li.nav-link').removeClass('active');
         $(this).parent().addClass('active');
         wallInterface.showAbout();
-    });
+    // }).on('click', 'li#timelapse a', function(e){
+    //     e.preventDefault();
+    //     wall.disable();
 
-    // Attach time lapse functions
-    $('#timelapse').on('click', 'a', function(e){
-        e.preventDefault();
-        wall.disable();
-
-        $('.nav li.nav-link').removeClass('active');
-        $(this).parent().addClass('active');
-        wallInterface.showTimelapse();
-        socket.timelapse();
-        timelapse.start();
+    //     $('.nav li.nav-link').removeClass('active');
+    //     $(this).parent().addClass('active');
+    //     wallInterface.showTimelapse();
+    //     socket.timelapse();
+    //     timelapse.start();
     });
 });
 
