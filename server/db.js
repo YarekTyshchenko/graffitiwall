@@ -11,9 +11,10 @@ exports.connect = function(onConnect) {
             replay: function(namespace, onData) {
                 var list = [];
                 var index = 0;
-                var cursor = collection
-                    .find({namespace: namespace, culled: false})
-                    .sort({_id: 1})
+                var cursor = collection.find(
+                        {namespace: namespace, culled: false},
+                        {_id: 1, x1: 1, y1: 1, x2: 1, y2: 1, color: 1, width: 1}
+                    ).sort({_id: -1})
                     .batchSize(1000);
                 cursor.count(function(err, total) {
                     cursor.each(function(err, row) {

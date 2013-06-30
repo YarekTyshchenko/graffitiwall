@@ -171,6 +171,9 @@ var Wall = (function(canvasObject) {
         draw: function(data) {
             _canvas.draw(data);
         },
+        drawUnder: function(data) {
+            _canvas.drawUnder(data);
+        },
         setColor: function(c) {
             _color = c;
         },
@@ -285,6 +288,11 @@ var CanvasObject = (function(ctx){
     return {
         draw: function(data) {
             _draw(data);
+        },
+        drawUnder: function(data) {
+            _context.globalCompositeOperation = 'destination-over';
+            _draw(data);
+            _context.globalCompositeOperation = 'source-over';
         },
         clear: function() {
             _context.clearRect(
