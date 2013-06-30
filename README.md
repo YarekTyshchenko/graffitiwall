@@ -24,8 +24,8 @@ Deployment instructions
 - For culling of hidden objects install node-canvas
 
 ```bash
-   sudo npm install canvas
-   # prey
+   sudo npm install canvas async
+   # pray
 ```
 - Allow server through firewall
 

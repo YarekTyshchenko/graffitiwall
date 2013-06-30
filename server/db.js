@@ -6,6 +6,9 @@ exports.connect = function(onConnect) {
         if(err) throw err;
         var collection = db.collection('points');
         onConnect({
+            close: function() {
+                db.close();
+            },
             insert: function(data) {
                 collection.insert(data, function(){});
             },
@@ -35,7 +38,7 @@ exports.connect = function(onConnect) {
             cull: function(idObject) {
                 collection.update({_id: idObject}, {$set: {culled: true}}, function() {});
             },
-            getNamespaces: function(callback) {
+            getNamespaces: function(callback, done) {
                 collection.aggregate({$group: {
                     _id:"$namespace",
                     x1: {$max : "$x1"},
@@ -48,16 +51,17 @@ exports.connect = function(onConnect) {
                         var height = Math.max(namespace.y1, namespace.y2);
                         callback(namespace._id, width, height);
                     });
+                    done();
                 });
             },
-            getPoints: function(namespace, callback) {
+            getPoints: function(namespace, callback, done) {
                 var cursor = collection.find(
                     {namespace: namespace, culled: false},
                     {_id: 1, x1: 1, y1: 1, x2: 1, y2: 1, width: 1}
                 ).sort({_id: -1});
                 cursor.count(function(err, total) {
                     cursor.each(function(err, row) {
-                        if (row === null) return;
+                        if (row === null) return done();
                         callback(row, total);
                     });
                 });

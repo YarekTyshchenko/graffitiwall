@@ -1,3 +1,4 @@
+var async = require('async');
 var Db = require('./db');
 var Canvas = require('canvas');
 
@@ -16,7 +17,29 @@ var __draw = function(_context, x1, y1, x2, y2, width) {
     _context.fill();
 };
 
+var _findItemBounds = function(x1, y1, x2, y2, width) {
+    var x = Math.min(x1, x2);
+    var y = Math.min(y1, y2);
+    var w = Math.max(x1, x2) - x;
+    var h = Math.max(y1, y2) - y;
+    return {
+        x: x - width,
+        y: y - width,
+        w: w + width,
+        h: h + width
+    };
+};
+
+var _checkBuffer = function(buffer, modifiedBuffer) {
+    var bufferLength = buffer.length;
+    for(var c = 0; c <= bufferLength; c++) {
+        if (buffer[c] !== modifiedBuffer[c]) return false;
+    }
+    return true;
+};
+
 Db.connect(function(db) {
+    var tasks = [];
     db.getNamespaces(function(namespace, width, height) {
         var _getCanvas = function() {
             var cache;
@@ -34,46 +57,39 @@ Db.connect(function(db) {
                 return cache;
             };
         }();
-        var hash;
+
         var i = 0;
         var culled = 0;
-        db.getPoints(namespace, function(item, total) {
-            // Record state of canvas before drawing
-            var startX = Math.min(item.x1, item.x2);
-            var startY = Math.min(item.y1, item.y2);
-            var widthI = Math.max(item.x1, item.x2) - startX;
-            var heightI = Math.max(item.y1, item.y2) - startY;
-            var temp = _getCanvas().ctx.getImageData(
-                startX - item.width,
-                startY - item.width,
-                widthI + item.width,
-                heightI + item.width
-            );
-            // Draw item onto buffer
-            __draw(_getCanvas().ctx, item.x1, item.y1, item.x2, item.y2, item.width);
-            // Check if the canvas has changed.
-            var newTemp = _getCanvas().ctx.getImageData(
-                startX - item.width,
-                startY - item.width,
-                widthI + item.width,
-                heightI + item.width
-            );
+        tasks.push(function(callback) {
+            db.getPoints(namespace, function(item, total) {
+                var b = _findItemBounds(item.x1, item.y1, item.x2, item.y2, item.width);
 
-            if (function(){
-                for(var c = 0; c <= temp.data.length; c++) {
-                    if (temp.data[c] !== newTemp.data[c]) {
-                        return false;
-                    }
+                // Record state of canvas before drawing
+                var buffer = _getCanvas().ctx.getImageData(b.x, b.y, b.w, b.h).data;
+                // Draw item onto buffer
+                __draw(_getCanvas().ctx, item.x1, item.y1, item.x2, item.y2, item.width);
+
+                // Check if the canvas has changed.
+                var modifiedBuffer = _getCanvas().ctx.getImageData(b.x, b.y, b.w, b.h).data;
+                if (_checkBuffer(buffer, modifiedBuffer)) {
+                    // Cull the item
+                    db.cull(item._id);
+                    culled++;
                 }
-                return true;
-            }()) {
-                culled++;
-                db.cull(item._id);
-            }
-            if (++i % 1000 === 0) {
-                console.log([i, '/', total, namespace, 'culled:', culled, 'objects'].join(' '));
-                culled = 0;
-            }
+
+                // Report stats
+                if (++i % 1000 === 0) {
+                    console.log([i, '/', total, '[' + namespace + ']', 'culled:', culled, 'objects'].join(' '));
+                    culled = 0;
+                }
+            }, function() {
+                callback();
+            });
+        });
+    }, function(){
+        async.series(tasks, function(){
+            console.log('All tasks done');
+            db.close();
         });
     });
 });
