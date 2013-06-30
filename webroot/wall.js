@@ -2,7 +2,7 @@
  * Wall interface
  */
 var WallInterface = (function() {
-    var progressBar = $('div.progress div.bar');
+    var progressBar = $('#bar-load');
     var progressText = $('div.progress span.text');
     var _onColorSelect = function(){};
     var _onWidthSelect = function(){};
@@ -200,13 +200,15 @@ var Timelapse = (function(CanvasObject){
 
     var _frames = [];
     var _running = false;
+    var _total = 1;
 
     var _progressCallback = function(index, total){};
 
     return {
-        receive: function(data) {
+        receive: function(data, total) {
             // append data to _frames
             _frames.push(data);
+            _total = total;
         },
         start: function() {
             if (_running) return;
@@ -217,7 +219,7 @@ var Timelapse = (function(CanvasObject){
                 var f = 0;
                 while(f++ < 100 && _frames.length) {
                     var frame = _frames.shift();
-                    _progressCallback(progress++, _frames.length);
+                    _progressCallback(progress++, _total);
                     _canvas.draw(frame);
                 }
 

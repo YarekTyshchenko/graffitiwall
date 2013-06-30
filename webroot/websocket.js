@@ -50,14 +50,17 @@ $(function(){
         }
     });
 
-    //timelapse.progressCallback(function(i, t) {
-    //    wallInterface.progress(i, t);
-    //});
+    var playBar = $('#bar-play');
+    timelapse.progressCallback(function(i, t) {
+        var p = Math.round((i / t) * 100) + '%';
+        playBar.width(p);
+        $('#debug').text([i, '/', t].join(' '));
+    });
 
     socket.addCallback('timelapse', function(response) {
         wallInterface.progress(response.index, response.total);
         for (var i = 0, length = response.data.length; i < length; i++) {
-            timelapse.receive(response.data[i]);
+            timelapse.receive(response.data[i], response.total);
         }
         timelapse.start();
     });

@@ -29,7 +29,7 @@
     </script>
 </head>
 <body>
-    <div class="navbar navbar-fixed-top noselect">
+    <div class="navbar navbar-fixed-top navbar-inverse noselect">
         <div class="navbar-inner">
             <div class="container">
                 <span class='brand'>Graffiti Wall</span>
@@ -42,25 +42,21 @@
                         <li id='about' class='nav-link'>
                             <a href='#'>About</a>
                         </li>
-                        <li id='timelapse' class='nav-link'>
+                        <!--li id='timelapse' class='nav-link'>
                             <a href='#'>Timelapse</a>
-                        </li>
-                        <li class='divider-vertical'></li>
+                        </li-->
                     </ul>
-
-                    <span class='navbar-text'>Users:</span>
-                    <span id='connected' class='navbar-text'>0</span>
 
                     <span id='debug' class='navbar-text'></span>
 
                     <div class='loading tab pull-right visible'>
-                        <div class='loadingText'>Loading ...</div>
                         <div class="progress">
-                            <span class='text'>0%</span>
-                            <div class="bar" style="width: 0%;"></div>
+                            <div id='bar-play' class="bar bar-success" style="width: 0%;"></div>
+                            <div id='bar-load' class="bar" style="width: 0%;"></div>
                         </div>
                     </div>
                     <div class='draw tab'>
+                        <span id='connected' class='badge'>0</span>
                         <ul id='colour-selector' class='nav pull-right'>
                             <li><a href='#'><div style='background-color: #F1F1F2'></div></a></li>
                             <li><a href='#'><div style='background-color: #929497'></div></a></li>
@@ -81,12 +77,9 @@
                             <li><a href='#'><div style='background-color: #753E33'></div></a></li>
                         </ul>
                         <ul id='brush-selector' class='nav pull-right'>
-                            <li><span class='navbar-text'>Brush Size</span></li>
-                            <li class='divider-vertical'></li>
                             <li><a href='#' data-size='5'>Small</a></li>
                             <li class='active'><a href='#' data-size='10'>Medium</a></li>
                             <li><a href='#' data-size='15'>Large</a></li>
-                            <li class='divider-vertical'></li>
                         </ul>
                     </div>
                 </div>
