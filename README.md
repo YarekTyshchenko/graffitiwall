@@ -11,15 +11,15 @@ Deployment instructions
     sudo apt-get install build-essential
 ```
 - Install node
-- install socket.io
+- Install dependancies through npm:
 
 ```bash
-    sudo npm install socket.io
+    sudo npm install socket.io mongodb underscore
 ```
-- Install mysql library
+- Install mysql library if you want to use mongo migration script
 
 ```bash
-    sudo npm install mysql@2.0.0-alpha3
+    sudo npm install mysql
 ```
 - Allow server through firewall
 
