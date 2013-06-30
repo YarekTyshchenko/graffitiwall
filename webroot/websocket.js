@@ -2,9 +2,9 @@ $(function(){
     var canvasObject = CanvasObject($('#draw-canvas'));
     // Create graffiti wall instance
     var wall = Wall(canvasObject);
-    //var timelapseCanvas = CanvasObject($('#timelapse-canvas'));
-    //timelapseCanvas.resize($('#main_content'), function(){});
-    //var timelapse = Timelapse(timelapseCanvas);
+    var timelapseCanvas = CanvasObject($('#timelapse-canvas'));
+    timelapseCanvas.resize($('#main_content'), function(){});
+    var timelapse = Timelapse(timelapseCanvas);
 
     // Instansiate interface
     var wallInterface = WallInterface();
@@ -54,9 +54,13 @@ $(function(){
     //    wallInterface.progress(i, t);
     //});
 
-    //socket.addCallback('timelapse', function(response){
-    //    timelapse.receive(response.data);
-    //});
+    socket.addCallback('timelapse', function(response) {
+        wallInterface.progress(response.index, response.total);
+        for (var i = 0, length = response.data.length; i < length; i++) {
+            timelapse.receive(response.data[i]);
+        }
+        timelapse.start();
+    });
 
     var startup = function() {
         wallInterface.switchToLoading();
@@ -90,15 +94,15 @@ $(function(){
         $('.nav li.nav-link').removeClass('active');
         $(this).parent().addClass('active');
         wallInterface.showAbout();
-    // }).on('click', 'li#timelapse a', function(e){
-    //     e.preventDefault();
-    //     wall.disable();
+    }).on('click', 'li#timelapse a', function(e){
+        e.preventDefault();
+        wall.disable();
 
-    //     $('.nav li.nav-link').removeClass('active');
-    //     $(this).parent().addClass('active');
-    //     wallInterface.showTimelapse();
-    //     socket.timelapse();
-    //     timelapse.start();
+        $('.nav li.nav-link').removeClass('active');
+        $(this).parent().addClass('active');
+        timelapse.clear();
+        wallInterface.showTimelapse();
+        socket.timelapse(timelapse.getSize());
     });
 });
 

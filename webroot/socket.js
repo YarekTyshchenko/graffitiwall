@@ -22,8 +22,8 @@ var Socket = (function(host, port) {
         replay: function() {
             socket.emit('replay');
         },
-        timelapse: function() {
-            socket.emit('timelapse');
+        timelapse: function(size) {
+            socket.emit('timelapse', size);
         },
         connect: function(callback) {
             socket.on('connect', function() {

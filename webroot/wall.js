@@ -199,31 +199,48 @@ var Timelapse = (function(CanvasObject){
     var _canvas = CanvasObject;
 
     var _frames = [];
+    var _running = false;
 
-    var _progressCallback = function(){};
+    var _progressCallback = function(index, total){};
 
     return {
         receive: function(data) {
             // append data to _frames
-            for (var i = 0, length = data.length; i < length; i++) {
-                _frames.push(data[i]);
-            }
-            console.log(_frames.length);
-
+            _frames.push(data);
         },
         start: function() {
-            _canvas.clear();
+            if (_running) return;
+            _running = true;
             // Start the animation from _frames;
+            var progress = 0;
             var anim = function() {
-                var frame = _frames.pop();
-                _canvas.draw(frame);
+                var f = 0;
+                while(f++ < 100 && _frames.length) {
+                    var frame = _frames.shift();
+                    _progressCallback(progress++, _frames.length);
+                    _canvas.draw(frame);
+                }
 
-                setTimeout(anim, 1);
+                // Convert to use propepr framed anim
+                if (_running && _frames.length) {
+                    setTimeout(anim, 1);
+                } else {
+                    _running = false;
+                }
             };
             anim();
         },
+        abort: function() {
+            _running = false;
+        },
         progressCallback: function(callback) {
             _progressCallback = callback;
+        },
+        clear: function() {
+            _canvas.clear();
+        },
+        getSize: function() {
+            return _canvas.getSize();
         }
     };
 });
@@ -301,6 +318,12 @@ var CanvasObject = (function(ctx){
                 _canvasElement.width(),
                 _canvasElement.height()
             );
+        },
+        getSize: function() {
+            return {
+                width: _canvasElement.width(),
+                height: _canvasElement.height()
+            };
         },
         resize: function(element, callback) {
             callback = callback || function(){};

@@ -47,5 +47,19 @@ Db.connect(function(db) {
                 });
             });
         });
+
+        socket.on('timelapse', function(data) {
+            console.log(data);
+            socket.get('namespace', function(err, namespace) {
+                db.timelapse(namespace, data, function(list, index, total, end) {
+                    socket.emit('timelapse', {
+                        data: list,
+                        index: index,
+                        total: total,
+                        end: end
+                    });
+                });
+            });
+        });
     });
 });
