@@ -21,6 +21,12 @@ Deployment instructions
 ```bash
     sudo npm install mysql
 ```
+- For culling of hidden objects install node-canvas
+
+```bash
+   sudo npm install canvas
+   # prey
+```
 - Allow server through firewall
 
 ```bash
