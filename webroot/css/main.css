@@ -55,7 +55,13 @@ html {
     width: 200px;
     float: right;
     margin: 10px 0;
+    position: relative;
 }
+
+#bar-play {
+    position: absolute;
+}
+
 .progress .bar {
     -webkit-transition: none;
     -moz-transition: none;

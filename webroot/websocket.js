@@ -46,14 +46,13 @@ $(function(){
 
         if (response.end) {
             wallInterface.switchToDraw();
+            wallInterface.progress(0,1);
             wall.enable();
         }
     });
 
-    var playBar = $('#bar-play');
     timelapse.progressCallback(function(i, t) {
-        var p = Math.round((i / t) * 100) + '%';
-        playBar.width(p);
+        wallInterface.playProgress(i, t);
         $('#debug').text([i, '/', t].join(' '));
     });
 
@@ -82,30 +81,35 @@ $(function(){
     // Begin loading data
     socket.connect(startup);
 
+    var _actionHelper = function(e, element) {
+        e.preventDefault();
+
+        $('.nav li.nav-link').removeClass('active');
+        $(element).parent().addClass('active');
+    };
     // Attach navbar buttons
     $('#page-selector').on('click', 'li#wall a', function(e){
-        e.preventDefault();
+        _actionHelper(e, this);
 
-        wall.enable();
-        $('.nav li.nav-link').removeClass('active');
-        $(this).parent().addClass('active');
+        timelapse.abort();
         wallInterface.showDraw();
+        wall.enable();
     }).on('click', 'li#about a', function(e) {
-        e.preventDefault();
+        _actionHelper(e, this);
 
         wall.disable();
-        $('.nav li.nav-link').removeClass('active');
-        $(this).parent().addClass('active');
         wallInterface.showAbout();
     }).on('click', 'li#timelapse a', function(e){
-        e.preventDefault();
-        wall.disable();
+        _actionHelper(e, this);
 
-        $('.nav li.nav-link').removeClass('active');
-        $(this).parent().addClass('active');
-        timelapse.clear();
+        wall.disable();
+        if (! timelapse.isRunning()) {
+            timelapse.clear();
+            wallInterface.progress(0,1);
+            wallInterface.playProgress(0,1);
+            socket.timelapse(timelapse.getSize());
+        }
         wallInterface.showTimelapse();
-        socket.timelapse(timelapse.getSize());
     });
 });
 

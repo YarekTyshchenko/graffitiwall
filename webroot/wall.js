@@ -3,7 +3,7 @@
  */
 var WallInterface = (function() {
     var progressBar = $('#bar-load');
-    var progressText = $('div.progress span.text');
+    var playBar = $('#bar-play');
     var _onColorSelect = function(){};
     var _onWidthSelect = function(){};
 
@@ -90,7 +90,10 @@ var WallInterface = (function() {
         progress: function(current, total) {
             var p = Math.round(_getProgress(current, total) * 100) + '%';
             progressBar.width(p);
-            progressText.text(p);
+        },
+        playProgress: function(current, total) {
+            var p = Math.round(_getProgress(current, total) * 100) + '%';
+            playBar.width(p);
         }
     };
 });
@@ -234,6 +237,9 @@ var Timelapse = (function(CanvasObject){
         },
         abort: function() {
             _running = false;
+        },
+        isRunning: function() {
+            return _running;
         },
         progressCallback: function(callback) {
             _progressCallback = callback;
