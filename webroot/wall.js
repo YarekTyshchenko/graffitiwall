@@ -111,21 +111,13 @@ var Wall = (function(canvasObject) {
     var _debugCallback = function(){};
 
     // Init
-    var _click = false;
-    var _p;
-    var _fingers = {};
-    _canvas.mousedown(function(p, fingers){
+    _canvas.mousedown(function(p){
         if (_enabled) {
-            if (fingers) {
-                _debugCallback(fingers);
-            }
-            _click = true;
-            _p = p;
             var data = {
-                x1: _p.x,
-                y1: _p.y,
-                x2: _p.x,
-                y2: _p.y,
+                x1: p.now.x,
+                y1: p.now.y,
+                x2: p.now.x,
+                y2: p.now.y,
                 width: _width,
                 color: _color
             };
@@ -134,23 +126,22 @@ var Wall = (function(canvasObject) {
         }
     });
     _canvas.mouseup(function(e){
-        _click = false;
+    }, function(data){
+        _debugCallback(data);
     });
 
-    _canvas.mousemove(function(np, fingers){
-        if (fingers) _debugCallback(fingers);
-        if (_click && _enabled) {
+    _canvas.mousemove(function(p){
+        if (_enabled) {
             var data = {
-                x1: np.x,
-                y1: np.y,
-                x2: _p.x,
-                y2: _p.y,
+                x1: p.now.x,
+                y1: p.now.y,
+                x2: p.last.x,
+                y2: p.last.y,
                 width: _width,
                 color: _color
             };
             _canvas.draw(data);
             _drawCallback(data);
-            _p = np;
         }
     });
 
@@ -286,6 +277,9 @@ var Timelapse = (function(CanvasObject){
 var CanvasObject = (function(ctx){
     var _canvasElement = ctx;
     var _context = ctx[0].getContext('2d');
+    var _touches = {};
+    var _click = false;
+    var _mouse = {last: {x: null, y: null}, now: {x: null, y: null}};
 
     var _scale = function() {
         if ('devicePixelRatio' in window) {
@@ -346,6 +340,23 @@ var CanvasObject = (function(ctx){
         return {x: x, y: y};
     };
 
+    var _processTouches = function(touchList, callback) {
+        $.each(touchList, function(i, touch) {
+            var t = _touches[touch.identifier];
+            if (! t) {
+                t = _touches[touch.identifier] = {
+                    last: {x: null, y: null}, now: {x: null, y: null}
+                };
+            }
+            // Remember old values
+            t.last = {x: t.now.x, y: t.now.y};
+            // Record current values
+            t.now = {x: touch.pageX, y: touch.pageY};
+
+            callback(t);
+        });
+    };
+
     return {
         draw: function(data) {
             _draw(data);
@@ -384,42 +395,45 @@ var CanvasObject = (function(ctx){
         },
         mousemove: function(callback) {
             _canvasElement.mousemove(function(e) {
+                if (! _click) return;
                 e.preventDefault();
 
                 var p = _getPosition(e);
-                callback(p);
+                _mouse.last = {x: _mouse.now.x, y: _mouse.now.y};
+                _mouse.now = p;
+                callback(_mouse);
             });
 
-            _canvasElement[0].addEventListener('touchmove', function(event) {
-                // Try to capture all touch events
-                var touches = [];
-                var i, len = event.targetTouches.length;
-                for (i = 0; i < len; i++) {
-                    touches.push({
-                        id: i,
-                        x: event.targetTouches[i].pageX,
-                        y: event.targetTouches[i].pageY
-                    });
-                }
-                callback(touches[0], event.touches);
+            _canvasElement[0].addEventListener('touchmove', function(e) {
+                _processTouches(e.touches, callback);
             }, false);
         },
-        mousedown: function(callback) {
+        mousedown: function(callback, debugCallback) {
             _canvasElement.mousedown(function(e) {
+                _click = true;
                 e.preventDefault();
 
                 var p = _getPosition(e);
-                callback(p);
+                _mouse.last = p;
+                _mouse.now = p;
+                callback(_mouse);
             });
-            _canvasElement[0].addEventListener('touchstart', function(event) {
-                var p = _getPosition(event);
-                callback(p, event.touches);
+            _canvasElement[0].addEventListener('touchstart', function(e) {
+                _processTouches(e.touches, callback);
             });
         },
-        mouseup: function(callback) {
-            $(window).mouseup(callback);
-            _canvasElement[0].addEventListener('touchend', function(e) {
+        mouseup: function(callback, debugCallback) {
+            $(window).mouseup(function(e){
+                _click = false;
                 callback(e);
+            });
+            _canvasElement[0].addEventListener('touchend', function(e) {
+                var t = {};
+                $.each(e.touches, function(i, touch) {
+                    t[touch.identifier] = {x: touch.pageX, y: touch.pageY};
+                });
+                debugCallback(t);
+                //callback(e);
             });
         }
     };
