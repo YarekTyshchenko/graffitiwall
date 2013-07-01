@@ -278,19 +278,28 @@ var CanvasObject = (function(ctx){
     var _canvasElement = ctx;
     var _context = ctx[0].getContext('2d');
 
+    var _scale = function() {
+        if ('devicePixelRatio' in window) {
+            if (window.devicePixelRatio > 1 && _context.webkitBackingStorePixelRatio < 2) {
+                return window.devicePixelRatio;
+            }
+        }
+        return 1;
+    }();
+
     var __draw = function(x1, y1, x2, y2, width, color) {
         _context.fillStyle = color;
         _context.strokeStyle = color;
-        _context.lineWidth = width*2;
+        _context.lineWidth = width*2 * _scale;
 
         _context.beginPath();
-        _context.moveTo(x2, y2);
-        _context.lineTo(x1, y1);
+        _context.moveTo(x2 * _scale, y2 * _scale);
+        _context.lineTo(x1 * _scale, y1 * _scale);
         _context.stroke();
         _context.closePath();
 
         _context.beginPath();
-        _context.arc(x1, y1, width, 0, Math.PI*2, true);
+        _context.arc(x1 * _scale, y1 * _scale, width * _scale, 0, Math.PI*2, true);
         _context.closePath();
         _context.fill();
     };

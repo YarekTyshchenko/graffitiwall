@@ -8,7 +8,7 @@ html {
 #noScriptImage {
     max-width: none;
 }
-#canvas {
+#draw-canvas {
     cursor: crosshair;
     -ms-touch-action: none;
     -webkit-touch-action: none;
