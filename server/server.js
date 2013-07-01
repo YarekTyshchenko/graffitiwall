@@ -28,6 +28,10 @@ Db.connect(function(db) {
         // Actual Draw events
         socket.on('draw', function(data) {
             socket.get('namespace', function(err, namespace) {
+                // Limit the width
+                if (data.width > 15 || data.width < 5) {
+                    data.width = 10;
+                }
                 data.namespace = namespace;
                 data.culled = false;
                 socket.broadcast.to(namespace).emit('draw', data);
