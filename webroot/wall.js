@@ -290,16 +290,16 @@ var CanvasObject = (function(ctx){
     var __draw = function(x1, y1, x2, y2, width, color) {
         _context.fillStyle = color;
         _context.strokeStyle = color;
-        _context.lineWidth = width*2 / _scale;
+        _context.lineWidth = width*2;
 
         _context.beginPath();
-        _context.moveTo(x2 / _scale, y2 / _scale);
-        _context.lineTo(x1 / _scale, y1 / _scale);
+        _context.moveTo(x2, y2);
+        _context.lineTo(x1, y1);
         _context.stroke();
         _context.closePath();
 
         _context.beginPath();
-        _context.arc(x1 / _scale, y1 / _scale, width / _scale, 0, Math.PI*2, true);
+        _context.arc(x1, y1, width, 0, Math.PI*2, true);
         _context.closePath();
         _context.fill();
     };
@@ -362,13 +362,13 @@ var CanvasObject = (function(ctx){
         },
         resize: function(element, callback) {
             callback = callback || function(){};
-            if (element.width() > _canvasElement.width() ||
-                element.height() > _canvasElement.height())
+            if (element.width() * _scale > _canvasElement.width() ||
+                element.height() * _scale > _canvasElement.height())
             {
             // If we are making canvas bigger fire callback
                 _canvasElement.attr({
-                    width: element.width(),
-                    height: element.height()
+                    width: element.width() * _scale,
+                    height: element.height() * _scale
                 });
                 callback();
             }
