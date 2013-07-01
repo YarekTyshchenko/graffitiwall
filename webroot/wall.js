@@ -125,10 +125,6 @@ var Wall = (function(canvasObject) {
             _drawCallback(data);
         }
     });
-    _canvas.mouseup(function(e){
-    }, function(data){
-        _debugCallback(data);
-    });
 
     _canvas.mousemove(function(p){
         if (_enabled) {
@@ -408,7 +404,13 @@ var CanvasObject = (function(ctx){
                 _processTouches(e.touches, callback);
             }, false);
         },
-        mousedown: function(callback, debugCallback) {
+        mousedown: function(callback) {
+            // Attach mouse up here too
+            $(window).mouseup(function(e){
+                _click = false;
+            });
+
+            // Attach Mouse down
             _canvasElement.mousedown(function(e) {
                 _click = true;
                 e.preventDefault();
@@ -418,22 +420,10 @@ var CanvasObject = (function(ctx){
                 _mouse.now = p;
                 callback(_mouse);
             });
+
+            // Attach Touchdown
             _canvasElement[0].addEventListener('touchstart', function(e) {
                 _processTouches(e.touches, callback);
-            });
-        },
-        mouseup: function(callback, debugCallback) {
-            $(window).mouseup(function(e){
-                _click = false;
-                callback(e);
-            });
-            _canvasElement[0].addEventListener('touchend', function(e) {
-                var t = {};
-                $.each(e.touches, function(i, touch) {
-                    t[touch.identifier] = {x: touch.pageX, y: touch.pageY};
-                });
-                debugCallback(t);
-                //callback(e);
             });
         }
     };
