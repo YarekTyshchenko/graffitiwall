@@ -114,7 +114,7 @@ var Wall = (function(canvasObject) {
     var _click = false;
     var _p;
     var _fingers = {};
-    _canvas.mousedown(function(p, fungers){
+    _canvas.mousedown(function(p, fingers){
         if (_enabled) {
             if (fingers) {
                 _debugCallback(fingers);
