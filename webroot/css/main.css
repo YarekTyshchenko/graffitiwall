@@ -38,6 +38,32 @@ html {
     overflow: hidden;
 }
 
+#brush-selector {
+    margin-top: 5px;
+    margin-right: 10px;
+}
+.brush {
+    width: 30px;
+    height: 30px;
+    padding:0;
+    cursor: hand;
+    cursor: pointer;
+    opacity: 0.7;
+    background: url('/brush.png');
+}
+.brush:hover, .brush.active {
+    opacity: 1;
+}
+.brush.small {
+    background-position: 0 -60px;
+}
+.brush.medium {
+    background-position: 0 -30px;
+}
+.brush.large {
+    background-position: 0 0;
+}
+
 /* Tabs */
 #main_content div.tab {
     display: none;

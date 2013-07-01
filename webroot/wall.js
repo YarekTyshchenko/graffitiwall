@@ -33,11 +33,11 @@ var WallInterface = (function() {
     });
 
     // On click set width
-    $('#brush-selector').on('click', 'a', function(e){
+    $('#brush-selector').on('click', 'li', function(e){
         e.preventDefault();
 
         $('#brush-selector li').removeClass('active');
-        $(this).parent().addClass('active');
+        $(this).addClass('active');
 
         _onWidthSelect($(this).data('size'));
     });
@@ -85,7 +85,7 @@ var WallInterface = (function() {
             return _selectColor(Math.floor(Math.random() * _colorlist.length));
         },
         getDefaultWidth: function() {
-            return $('#brush-selector li.active a').data('size');
+            return $('#brush-selector li.active').data('size');
         },
         progress: function(current, total) {
             var p = Math.round(_getProgress(current, total) * 100) + '%';

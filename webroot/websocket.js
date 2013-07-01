@@ -44,10 +44,10 @@ $(function(){
             wall.drawUnder(response.data[i]);
         }
 
+        wall.enable();
         if (response.end) {
             wallInterface.switchToDraw();
             wallInterface.progress(0,1);
-            wall.enable();
         }
     });
 
