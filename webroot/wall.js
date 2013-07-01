@@ -179,9 +179,6 @@ var Wall = (function(canvasObject) {
         setDrawCallback: function(callback) {
             _drawCallback = callback;
         },
-        setDebugCallback: function(callback) {
-            _debugCallback = callback;
-        },
         enable: function() {
             _enabled = true;
         },
@@ -348,7 +345,6 @@ var CanvasObject = (function(ctx){
             t.last = {x: t.now.x, y: t.now.y};
             // Record current values
             t.now = {x: touch.pageX, y: touch.pageY};
-
             callback(t);
         });
     };

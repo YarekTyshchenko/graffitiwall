@@ -82,10 +82,6 @@ $(function(){
         socket.draw(data);
     });
 
-    wall.setDebugCallback(function(data) {
-        socket.debug(data);
-    });
-
     // Begin loading data
     socket.connect(startup);
 
