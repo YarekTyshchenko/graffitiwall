@@ -290,16 +290,16 @@ var CanvasObject = (function(ctx){
     var __draw = function(x1, y1, x2, y2, width, color) {
         _context.fillStyle = color;
         _context.strokeStyle = color;
-        _context.lineWidth = width*2 * _scale;
+        _context.lineWidth = width*2 / _scale;
 
         _context.beginPath();
-        _context.moveTo(x2 * _scale, y2 * _scale);
-        _context.lineTo(x1 * _scale, y1 * _scale);
+        _context.moveTo(x2 / _scale, y2 / _scale);
+        _context.lineTo(x1 / _scale, y1 / _scale);
         _context.stroke();
         _context.closePath();
 
         _context.beginPath();
-        _context.arc(x1 * _scale, y1 * _scale, width * _scale, 0, Math.PI*2, true);
+        _context.arc(x1 / _scale, y1 / _scale, width / _scale, 0, Math.PI*2, true);
         _context.closePath();
         _context.fill();
     };
