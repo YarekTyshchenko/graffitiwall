@@ -108,12 +108,17 @@ var Wall = (function(canvasObject) {
     var _width;
 
     var _drawCallback = function(){};
+    var _debugCallback = function(){};
 
     // Init
     var _click = false;
     var _p;
-    _canvas.mousedown(function(p){
+    var _fingers = {};
+    _canvas.mousedown(function(p, fungers){
         if (_enabled) {
+            if (fingers) {
+                _debugCallback(fingers);
+            }
             _click = true;
             _p = p;
             var data = {
@@ -132,7 +137,8 @@ var Wall = (function(canvasObject) {
         _click = false;
     });
 
-    _canvas.mousemove(function(np){
+    _canvas.mousemove(function(np, fingers){
+        if (fingers) _debugCallback(fingers);
         if (_click && _enabled) {
             var data = {
                 x1: np.x,
@@ -185,6 +191,9 @@ var Wall = (function(canvasObject) {
         },
         setDrawCallback: function(callback) {
             _drawCallback = callback;
+        },
+        setDebugCallback: function(callback) {
+            _debugCallback = callback;
         },
         enable: function() {
             _enabled = true;
@@ -392,7 +401,7 @@ var CanvasObject = (function(ctx){
                         y: event.targetTouches[i].pageY
                     });
                 }
-                callback(touches[0]);
+                callback(touches[0], event.touches);
             }, false);
         },
         mousedown: function(callback) {
@@ -404,7 +413,7 @@ var CanvasObject = (function(ctx){
             });
             _canvasElement[0].addEventListener('touchstart', function(event) {
                 var p = _getPosition(event);
-                callback(p);
+                callback(p, event.touches);
             });
         },
         mouseup: function(callback) {

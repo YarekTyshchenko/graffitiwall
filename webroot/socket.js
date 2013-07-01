@@ -30,6 +30,9 @@ var Socket = (function(host, port) {
                 socket.emit('namespace', namespace);
                 callback();
             });
+        },
+        debug: function(data) {
+            socket.emit('debug', data);
         }
     };
 });

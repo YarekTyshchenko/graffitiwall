@@ -65,5 +65,9 @@ Db.connect(function(db) {
                 });
             });
         });
+
+        socket.on('debug', function(data) {
+            console.log(data);
+        });
     });
 });
