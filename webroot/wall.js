@@ -402,6 +402,7 @@ var CanvasObject = (function(ctx){
 
             _canvasElement[0].addEventListener('touchmove', function(e) {
                 _processTouches(e.touches, callback);
+                e.preventDefault();
             }, false);
         },
         mousedown: function(callback) {
