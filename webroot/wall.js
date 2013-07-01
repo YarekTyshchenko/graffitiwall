@@ -112,6 +112,7 @@ var Wall = (function(canvasObject) {
 
     // Init
     _canvas.mousedown(function(p){
+        _debugCallback(p);
         if (_enabled) {
             var data = {
                 x1: p.now.x,
@@ -127,6 +128,7 @@ var Wall = (function(canvasObject) {
     });
 
     _canvas.mousemove(function(p){
+        _debugCallback(p);
         if (_enabled) {
             var data = {
                 x1: p.now.x,
@@ -348,6 +350,11 @@ var CanvasObject = (function(ctx){
             t.last = {x: t.now.x, y: t.now.y};
             // Record current values
             t.now = {x: touch.pageX, y: touch.pageY};
+            t.extra = {
+                radius: {x: touch.radiusX || null, y:touch.radiusY || null},
+                angle: touch.rotationAngle || null,
+                force: touch.force || null
+            };
 
             callback(t);
         });
