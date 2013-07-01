@@ -89,11 +89,11 @@ var WallInterface = (function() {
         },
         progress: function(current, total) {
             var p = Math.round(_getProgress(current, total) * 100) + '%';
-            progressBar.width(p);
+            $(progressBar).css('width', p);
         },
         playProgress: function(current, total) {
             var p = Math.round(_getProgress(current, total) * 100) + '%';
-            playBar.width(p);
+            $(playBar).css('width', p);
         }
     };
 });
@@ -204,31 +204,44 @@ var Timelapse = (function(CanvasObject){
     var _frames = [];
     var _running = false;
     var _total = 1;
+    var _progress = 0;
+    var _dataProgress = 0;
+    var _loading = false;
 
-    var _progressCallback = function(index, total){};
+    var _loadProgress = function(index, total){};
+    var _playProgress = function(index, total){};
+    var _initiateLoading = function(){};
 
     return {
-        receive: function(data, total) {
-            // append data to _frames
-            _frames.push(data);
-            _total = total;
+        receive: function(response) {
+            // Don't accept data if we aren't on
+            if (! _running && !_loading) return;
+            _total = response.total;
+            for (var i = 0, length = response.data.length; i < length; i++) {
+                _loadProgress(_dataProgress++, _total);
+                _frames.push(response.data[i]);
+            }
+            if (response.end) {
+                _loading = false;
+            }
         },
         start: function() {
             if (_running) return;
             _running = true;
+            _playProgress(0,1);
+            if (!_loading) _initiateLoading();
             // Start the animation from _frames;
-            var progress = 0;
             var anim = function() {
                 var f = 0;
                 while(f++ < 100 && _frames.length) {
                     var frame = _frames.shift();
-                    _progressCallback(progress++, _total);
+                    _playProgress(_progress++, _total);
                     _canvas.draw(frame);
                 }
 
                 // Convert to use propepr framed anim
-                if (_running && _frames.length) {
-                    setTimeout(anim, 1);
+                if (_running && (_loading || _frames.length)) {
+                    setTimeout(anim, 50);
                 } else {
                     _running = false;
                 }
@@ -236,19 +249,24 @@ var Timelapse = (function(CanvasObject){
             anim();
         },
         abort: function() {
+            _frames = [];
             _running = false;
-        },
-        isRunning: function() {
-            return _running;
-        },
-        progressCallback: function(callback) {
-            _progressCallback = callback;
-        },
-        clear: function() {
+            _total = 1;
+            _progress = 0;
             _canvas.clear();
         },
-        getSize: function() {
-            return _canvas.getSize();
+        loadProgress: function(callback) {
+            _loadProgress = callback;
+        },
+        playProgress: function(callback) {
+            _playProgress = callback;
+        },
+        initiateLoading: function(callback) {
+            _initiateLoading = function(){
+                _loading = true;
+                _loadProgress(0,1);
+                callback(_canvas.getSize());
+            };
         }
     };
 });

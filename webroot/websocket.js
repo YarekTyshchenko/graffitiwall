@@ -51,17 +51,21 @@ $(function(){
         }
     });
 
-    timelapse.progressCallback(function(i, t) {
+    timelapse.playProgress(function(i, t) {
         wallInterface.playProgress(i, t);
-        $('#debug').text([i, '/', t].join(' '));
+        //$('#debug').text([i, '/', t].join(' '));
+    });
+
+    timelapse.loadProgress(function(i, t) {
+        wallInterface.progress(i, t);
+    });
+
+    timelapse.initiateLoading(function(size) {
+        socket.timelapse(size);
     });
 
     socket.addCallback('timelapse', function(response) {
-        wallInterface.progress(response.index, response.total);
-        for (var i = 0, length = response.data.length; i < length; i++) {
-            timelapse.receive(response.data[i], response.total);
-        }
-        timelapse.start();
+        timelapse.receive(response);
     });
 
     var startup = function() {
@@ -93,6 +97,7 @@ $(function(){
 
         timelapse.abort();
         wallInterface.showDraw();
+        wallInterface.switchToDraw();
         wall.enable();
     }).on('click', 'li#about a', function(e) {
         _actionHelper(e, this);
@@ -103,13 +108,8 @@ $(function(){
         _actionHelper(e, this);
 
         wall.disable();
-        if (! timelapse.isRunning()) {
-            timelapse.clear();
-            wallInterface.progress(0,1);
-            wallInterface.playProgress(0,1);
-            socket.timelapse(timelapse.getSize());
-        }
         wallInterface.showTimelapse();
+        timelapse.start();
     });
 });
 
