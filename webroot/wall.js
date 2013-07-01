@@ -362,13 +362,13 @@ var CanvasObject = (function(ctx){
         },
         resize: function(element, callback) {
             callback = callback || function(){};
-            if (element.width() * _scale > _canvasElement.width() ||
-                element.height() * _scale > _canvasElement.height())
+            if (element.width() > _canvasElement.width() ||
+                element.height() > _canvasElement.height())
             {
             // If we are making canvas bigger fire callback
                 _canvasElement.attr({
-                    width: element.width() * _scale,
-                    height: element.height() * _scale
+                    width: element.width(),
+                    height: element.height()
                 });
                 callback();
             }
