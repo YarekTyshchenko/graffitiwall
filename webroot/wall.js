@@ -201,7 +201,7 @@ var Timelapse = (function(CanvasObject){
     var _dataProgress = 0;
     var _loading = false;
     // Draw frames per anim frame
-    var _fpf = 10;
+    var _fpf = 50;
 
     var _loadProgress = function(index, total){};
     var _playProgress = function(index, total){};
@@ -224,11 +224,16 @@ var Timelapse = (function(CanvasObject){
             // Don't accept data if we aren't on
             if (! _running && !_loading) return;
             _total = response.total;
-            _fpf = Math.floor(_total/3600) || 10;
+
+
             _loadProgress(_dataProgress += response.data.length, _total);
             for (var i = 0, length = response.data.length; i < length; i++) {
                 _frames.push(response.data[i]);
             }
+            // Configure Frames per frame
+            var fpf = Math.floor(_dataProgress/3600);
+            if (fpf > _fpf) _fpf = fpf;
+
             if (response.end) {
                 _loading = false;
             }
