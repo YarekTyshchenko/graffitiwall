@@ -225,20 +225,20 @@ var Timelapse = (function(CanvasObject){
             if (!_loading) _initiateLoading();
             // Start the animation from _frames;
             var anim = function() {
-                var f = 0;
-                while(f++ < 100 && _frames.length) {
-                    var frame = _frames.shift();
-                    _canvas.draw(frame);
-                    _progress++;
-                }
-                _playProgress(_progress, _total);
-
                 // Convert to use propepr framed anim
                 if (_running && (_loading || _frames.length)) {
                     setTimeout(anim, 25);
                 } else {
                     _running = false;
                 }
+
+                var f = 0;
+                while(f++ < 50 && _frames.length) {
+                    var frame = _frames.shift();
+                    _canvas.draw(frame);
+                    _progress++;
+                }
+                _playProgress(_progress, _total);
             };
             anim();
         },
