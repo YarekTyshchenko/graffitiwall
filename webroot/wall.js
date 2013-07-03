@@ -89,11 +89,11 @@ var WallInterface = (function() {
         },
         progress: function(current, total) {
             var p = Math.round(_getProgress(current, total) * 100) + '%';
-            $(progressBar).css('width', p);
+            progressBar.css('width', p);
         },
         playProgress: function(current, total) {
             var p = Math.round(_getProgress(current, total) * 100) + '%';
-            $(playBar).css('width', p);
+            playBar.css('width', p);
         }
     };
 });
@@ -210,8 +210,8 @@ var Timelapse = (function(CanvasObject){
             // Don't accept data if we aren't on
             if (! _running && !_loading) return;
             _total = response.total;
+            _loadProgress(_dataProgress += response.data.length, _total);
             for (var i = 0, length = response.data.length; i < length; i++) {
-                _loadProgress(_dataProgress++, _total);
                 _frames.push(response.data[i]);
             }
             if (response.end) {
@@ -228,13 +228,14 @@ var Timelapse = (function(CanvasObject){
                 var f = 0;
                 while(f++ < 100 && _frames.length) {
                     var frame = _frames.shift();
-                    _playProgress(_progress++, _total);
                     _canvas.draw(frame);
+                    _progress++;
                 }
+                _playProgress(_progress, _total);
 
                 // Convert to use propepr framed anim
                 if (_running && (_loading || _frames.length)) {
-                    setTimeout(anim, 50);
+                    setTimeout(anim, 25);
                 } else {
                     _running = false;
                 }
