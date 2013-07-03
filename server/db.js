@@ -37,15 +37,7 @@ exports.connect = function(onConnect) {
             timelapse: function(namespace, size, onData) {
                 var list = [];
                 var index = 0;
-                var cursor = collection.find({
-                    namespace: namespace,
-                    $or: [
-                        {x1: {$lt: size.width}},
-                        {x2: {$lt: size.width}},
-                        {y1: {$lt: size.height}},
-                        {y2: {$lt: size.height}}
-                    ]
-                }, {
+                var cursor = collection.find({namespace: namespace}, {
                     _id: 0, x1: 1, y1: 1, x2: 1, y2: 1, color: 1, width: 1
                 }).sort({_id: 1});
                 cursor.count(function(err, total) {
