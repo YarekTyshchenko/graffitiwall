@@ -205,6 +205,18 @@ var Timelapse = (function(CanvasObject){
     var _playProgress = function(index, total){};
     var _initiateLoading = function(){};
 
+    // shim layer with setTimeout fallback
+    var _requestAnimFrame = (function(){
+      return  window.requestAnimationFrame       ||
+              window.webkitRequestAnimationFrame ||
+              window.mozRequestAnimationFrame    ||
+              window.oRequestAnimationFrame      ||
+              window.msRequestAnimationFrame     ||
+              function( callback ){
+                window.setTimeout(callback, 1000 / 60);
+              };
+    })();
+
     return {
         receive: function(response) {
             // Don't accept data if we aren't on
@@ -225,20 +237,17 @@ var Timelapse = (function(CanvasObject){
             if (!_loading) _initiateLoading();
             // Start the animation from _frames;
             var anim = function() {
-                // Convert to use propepr framed anim
-                if (_running && (_loading || _frames.length)) {
-                    setTimeout(anim, 25);
+                var f = 0;
+                while(f++ < _total/3600 && _frames[_progress++]) {
+                    _canvas.draw(_frames[_progress]);
+                }
+                _playProgress(_progress, _total);
+
+                if (_running && (_loading || _progress < _total)) {
+                    _requestAnimFrame(anim);
                 } else {
                     _running = false;
                 }
-
-                var f = 0;
-                while(f++ < 50 && _frames.length) {
-                    var frame = _frames.shift();
-                    _canvas.draw(frame);
-                    _progress++;
-                }
-                _playProgress(_progress, _total);
             };
             anim();
         },
