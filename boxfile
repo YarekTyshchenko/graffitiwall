@@ -15,6 +15,7 @@ hooks:
                 - MakeFolder
                 - CheckoutHead
                 - Symlink
+                - LinkNodeModules
                 #- Cleanup
             pre-receive:
                 - CheckDeployed
@@ -27,6 +28,8 @@ hooks:
             - "git --git-dir=graffitiwall.git --work-tree=__TEMP__ checkout -f"
         Symlink:
             - "ln -sfT __TEMP__ __APP__"
+        LinkNodeModules:
+            - "ln -sfT ../../../node_modules __APP__/server/node_modules"
         Cleanup:
             - "rm -r $(ls -t build | tail -n +11 | awk '{print \"build/\" $0;}');"
         CheckDeployed:
