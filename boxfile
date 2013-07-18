@@ -1,0 +1,33 @@
+# Graffitiwall deployment boxfile
+hooks:
+    config_vars:
+        execute: # Execute these commands and set the var with the output
+            # Get the HEAD hash and
+            __HASH__: "git describe --always"
+            __BRANCH__: "git rev-parse --symbolic-full-name --abbrev-ref HEAD"
+        declare: # Just set var with this string
+            __TEMP__: "build/__HASH__"
+            __APP__: "graffitiwall"
+
+    branches:
+        master:
+            post-receive:
+                - MakeFolder
+                - CheckoutHead
+                - Symlink
+                #- Cleanup
+            pre-receive:
+                - CheckDeployed
+    # Generic steps, use the config_vars array for specifics
+    steps:
+        # Make a folder from the HASH
+        MakeFolder:
+            - "mkdir -p __TEMP__"
+        CheckoutHead:
+            - "git --git-dir=graffitiwall.git --work-tree=__TEMP__ checkout -f"
+        Symlink:
+            - "ln -sfT __TEMP__ __APP__"
+        Cleanup:
+            - "rm -r $(ls -t build | tail -n +11 | awk '{print \"build/\" $0;}');"
+        CheckDeployed:
+            - "echo Check if __HASH__ is already deployed"
