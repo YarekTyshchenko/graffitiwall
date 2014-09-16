@@ -150,6 +150,9 @@ var Wall = (function(canvasObject) {
         clear: function() {
             _canvas.clear();
         },
+        getSize: function() {
+            return _canvas.getSize();
+        },
         resizeToElement: function(element, callback, delay) {
             var timeout;
             $(window).resize(function() {

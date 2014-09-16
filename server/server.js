@@ -39,9 +39,9 @@ Db.connect(function(db) {
             });
         });
 
-        socket.on('replay', function(data) {
+        socket.on('replay', function(size) {
             socket.get('namespace', function(err, namespace) {
-                db.replay(namespace, function(list, index, total, end) {
+                db.replay(namespace, size, function(list, index, total, end) {
                     socket.emit('replay', {
                         data: list,
                         index: index,

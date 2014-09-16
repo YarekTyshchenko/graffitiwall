@@ -71,7 +71,7 @@ $(function(){
     var startup = function() {
         wallInterface.switchToLoading();
         wall.disable();
-        socket.replay();
+        socket.replay(wall.getSize());
     };
     // Make it resize to element size and start the wall
     wall.resizeToElement($('#main_content'), startup);

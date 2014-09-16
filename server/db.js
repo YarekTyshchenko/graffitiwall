@@ -12,11 +12,16 @@ exports.connect = function(onConnect) {
             insert: function(data) {
                 collection.insert(data, function(){});
             },
-            replay: function(namespace, onData) {
+            replay: function(namespace, size, onData) {
                 var list = [];
                 var index = 0;
                 var cursor = collection.find(
-                    {namespace: namespace, culled: false},
+                    {namespace: namespace, culled: false, $or: [
+                        {x1:{$lt: size.width+30}},
+                        {x2:{$lt: size.width+30}},
+                        {y1:{$lt: size.height+30}},
+                        {y2:{$lt: size.height+30}}
+                    ]},
                     {_id: 1, x1: 1, y1: 1, x2: 1, y2: 1, color: 1, width: 1}
                 ).sort({_id: -1});
                 cursor.count(function(err, total) {
