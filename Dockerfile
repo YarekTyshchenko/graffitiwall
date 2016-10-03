@@ -18,9 +18,10 @@ RUN curl -SLO "http://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x
 	&& npm cache clear
 
 WORKDIR /graffitiwall/server
+RUN npm install socket.io mongodb underscore
+
 ADD . /graffitiwall
 
-RUN npm install socket.io mongodb underscore
 EXPOSE 12346
 
 CMD ["node", "/graffitiwall/server/server.js"]

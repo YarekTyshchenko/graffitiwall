@@ -1,5 +1,5 @@
 var MongoClient = require('mongodb').MongoClient;
-MongoClient.connect('mongodb://127.0.0.1:27017/graffitiwall', {db: {native_parser: true}}, function(err, db) {
+MongoClient.connect('mongodb://graffitiwall:graffitiwall@104.155.23.178:27017/graffitiwall', {db: {native_parser: true}}, function(err, db) {
     if(err) throw err;
 
     var collection = db.collection('points');
@@ -13,4 +13,5 @@ MongoClient.connect('mongodb://127.0.0.1:27017/graffitiwall', {db: {native_parse
             }
         });
     });
+    console.log(cursor);
 });
