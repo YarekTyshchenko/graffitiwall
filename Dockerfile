@@ -19,7 +19,7 @@ RUN curl -SLO "http://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x
 
 WORKDIR /graffitiwall/server
 RUN npm install socket.io mongodb underscore
-
+RUN npm install canvas async
 ADD . /graffitiwall
 
 EXPOSE 12346

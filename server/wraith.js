@@ -22,11 +22,12 @@ var _findItemBounds = function(x1, y1, x2, y2, width) {
     var y = Math.min(y1, y2);
     var w = Math.max(x1, x2) - x;
     var h = Math.max(y1, y2) - y;
+    // Magic numbers to try to make the bounds a little bigger than they are
     return {
-        x: x - width,
-        y: y - width,
-        w: w + width,
-        h: h + width
+        x: x - width - 1,
+        y: y - width - 1,
+        w: w + width + 2,
+        h: h + width + 2
     };
 };
 
