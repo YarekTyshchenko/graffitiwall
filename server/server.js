@@ -6,9 +6,7 @@ Db.connect(function(db) {
     io.on('connection', function (socket) {
         // Report disconnects
         socket.on('disconnect', function () {
-            //_.forEach(io.sockets.manager.roomClients[socket.id], function(joined, room) {
-            //    io.sockets.to(room).emit('count', io.sockets.manager.rooms[room].length - 1);
-            //});
+            io.sockets.to(socket.namespace).emit('count', io.sockets.sockets.length);
         });
 
         // Set name space and report connect count
