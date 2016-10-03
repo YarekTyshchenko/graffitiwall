@@ -6,7 +6,8 @@ Db.connect(function(db) {
     io.on('connection', function (socket) {
         // Report disconnects
         socket.on('disconnect', function () {
-            io.sockets.to(socket.namespace).emit('count', io.sockets.sockets.length);
+            console.log("Socket count:", io.sockets.sockets.length);
+            io.sockets.to(socket.namespace).emit('count', io.sockets.sockets.length || 1);
         });
 
         // Set name space and report connect count
@@ -18,7 +19,8 @@ Db.connect(function(db) {
             }
             socket.join(namespace);
             socket.namespace = namespace;
-            io.sockets.to(namespace).emit('count', io.sockets.sockets.length);
+            console.log("Socket count:", io.sockets.sockets.length);
+            io.sockets.to(namespace).emit('count', io.sockets.sockets.length || 1);
         });
         // Actual Draw events
         socket.on('draw', function(data) {
