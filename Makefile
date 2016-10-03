@@ -20,3 +20,7 @@ stop:
 logs:
 	docker logs -f graffitiwall
 
+version=latest
+push:
+	docker tag yarekt/graffitiwall gcr.io/graffitiwall-145317/graffitiwall:$(version)
+	docker push gcr.io/graffitiwall-145317/graffitiwall:$(version)

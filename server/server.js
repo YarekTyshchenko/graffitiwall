@@ -4,7 +4,6 @@ var Db = require('./db');
 
 Db.connect(function(db) {
     io.on('connection', function (socket) {
-
         // Report disconnects
         socket.on('disconnect', function () {
             //_.forEach(io.sockets.manager.roomClients[socket.id], function(joined, room) {
@@ -14,56 +13,48 @@ Db.connect(function(db) {
 
         // Set name space and report connect count
         socket.on('namespace', function(namespace) {
-            console.log(namespace);
-        //     namespace = namespace.replace(/[^a-zA-Z0-9]/g, '');
-        //     if (namespace.length < 1) {
-        //         namespace = '/';
-        //     }
-        //     socket.set('namespace', namespace);
-        //     socket.join(namespace);
-        //     io.sockets.to(namespace).emit('count', io.sockets.clients(namespace).length);
+            console.log("Namespace:", namespace);
+            var namespace = namespace.replace(/[^a-zA-Z0-9]/g, '');
+            if (namespace.length < 1) {
+                namespace = '/';
+            }
+            socket.join(namespace);
+            socket.namespace = namespace;
+            io.sockets.to(namespace).emit('count', io.sockets.sockets.length);
         });
-var namespace = '/';
         // Actual Draw events
         socket.on('draw', function(data) {
-            // socket.get('namespace', function(err, namespace) {
-                // Limit the width
-                if (data.width > 15 || data.width < 5) {
-                    data.width = 10;
-                }
-                data.namespace = namespace;
-                data.culled = false;
-                //socket.broadcast.to(namespace).emit('draw', data);
-                socket.broadcast.emit('draw', data);
-                db.insert(data);
-            // });
+            // Limit the width
+            if (data.width > 15 || data.width < 5) {
+                data.width = 10;
+            }
+            data.namespace = socket.namespace;
+            data.culled = false;
+            socket.broadcast.to(socket.namespace).emit('draw', data);
+            db.insert(data);
         });
 
         socket.on('replay', function(size) {
-            // socket.get('namespace', function(err, namespace) {
-                db.replay(namespace, size, function(list, index, total, end) {
-                    socket.emit('replay', {
-                        data: list,
-                        index: index,
-                        total: total,
-                        end: end
-                    });
+            db.replay(socket.namespace, size, function(list, index, total, end) {
+                socket.emit('replay', {
+                    data: list,
+                    index: index,
+                    total: total,
+                    end: end
                 });
-            // });
+            });
         });
 
         socket.on('timelapse', function(data) {
             console.log(data);
-            // socket.get('namespace', function(err, namespace) {
-                db.timelapse(namespace, data, function(list, index, total, end) {
-                    socket.emit('timelapse', {
-                        data: list,
-                        index: index,
-                        total: total,
-                        end: end
-                    });
+            db.timelapse(socket.namespace, data, function(list, index, total, end) {
+                socket.emit('timelapse', {
+                    data: list,
+                    index: index,
+                    total: total,
+                    end: end
                 });
-            // });
+            });
         });
     });
 });
