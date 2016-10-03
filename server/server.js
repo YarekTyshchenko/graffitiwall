@@ -33,7 +33,8 @@ var namespace = '/';
                 }
                 data.namespace = namespace;
                 data.culled = false;
-                socket.broadcast.to(namespace).emit('draw', data);
+                //socket.broadcast.to(namespace).emit('draw', data);
+                socket.broadcast.emit('draw', data);
                 db.insert(data);
             // });
         });
