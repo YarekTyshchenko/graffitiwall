@@ -2,7 +2,7 @@ var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectID;
 
 exports.connect = function(onConnect) {
-    MongoClient.connect('mongodb://graffitiwall:graffitiwall@104.155.23.178:27017/graffitiwall', {db: {native_parser: true}}, function(err, db) {
+    MongoClient.connect('mongodb://graffitiwall:graffitiwall@130.211.111.94:27017/graffitiwall', {db: {native_parser: true}}, function(err, db) {
         if(err) throw err;
         var collection = db.collection('points');
         onConnect({
